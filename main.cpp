@@ -1,22 +1,25 @@
-/*
-* Main function
-* 
-*/
-
+#pragma once
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
+#ifdef __unix__
+# include <unistd.h>
+#elif defined _WIN32
+# include <windows.h>
+#define sleep(x) Sleep(1000 * (x))
+#endif 
 
 #include <shaderClass.h>
 #include <Inputs.h>
 #include <CameraClass.h>
-#include <TexturesHeader.h>
-#include <Buffers.h>
-
-
+#include <Model.h>
+#include <Objects.h>
+#include <SimpleGeometry.h>
+#include <Lights.h>
+#include <Text.h>
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -47,8 +50,8 @@ int main()
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
 
-    // tell GLFW to capture our mouse
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    //glEnable(GL_BLEND);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // glad: load all OpenGL function pointers
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -58,103 +61,90 @@ int main()
     }
 
     // build and compile our shader program and buffers program
-    Shader shader("Shader/shader.vs", "Shader/shader.fs");
-    Buffers buffers;
-    
+    Shader lightShader("Shader/lightshader.vs", "Shader/lightShader.fs");
+    Shader textShader("Shader/textShader.vs", "Shader/textShader.fs");
 
     //Initialize some parameters
     glEnable(GL_DEPTH_TEST);
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glDepthFunc(GL_LESS);
 
-    glm::vec3 cubePositions[] = {
-        glm::vec3(0.0f,  -1.0f,  0.0f),
-        glm::vec3(1.0f,  -1.0f,  0.0f),
-        glm::vec3(0.0f,  -1.0f,  1.0f),
-        glm::vec3(1.0f,  -1.0f,  1.0f),
+    glEnable(GL_STENCIL_TEST);
 
-        /*
-        glm::vec3(2.0f,  5.0f, -15.0f),
-        glm::vec3(-1.5f, -2.2f, -2.5f),
-        glm::vec3(-3.8f, -2.0f, -12.3f),
-        glm::vec3(2.4f, -0.4f, -3.5f),
-        glm::vec3(-1.7f,  3.0f, -7.5f),
-        glm::vec3(1.3f, -2.0f, -2.5f),
-        glm::vec3(1.5f,  2.0f, -2.5f),
-        glm::vec3(1.5f,  0.2f, -1.5f),
-        glm::vec3(-1.3f,  1.0f, -1.5f)
-        */
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    char pathRobot[] = "models/Robot/LilRobot.obj";
+    Model robot(pathRobot);
+
+    char pathRoom[] = "models/Room/room.obj";
+    Model room(pathRoom);
+
+    char pathBox[] = "models/Box/Box.obj";
+    Model box(pathBox);
+
+    Light light;
+
+    glm::vec3 pointLightPositions[] = {
+        glm::vec3(8.f, 2.f, 8.f),
+        glm::vec3(0.f, 2.f, 0.f)
     };
 
-    //Textures
-    unsigned int texture1;
-    unsigned int texture2;
-    unsigned int texture3;
-
-    glGenTextures(1, &texture1);
-    generateTextures(texture1,"textures/grass.jpg");
-    glGenTextures(1, &texture2);
-    generateTextures(texture2,"textures/rock.jpg");
-    glGenTextures(1, &texture3);
-    generateTextures(texture3, "textures/cartoon.jpg");
-
-    // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
-    shader.use();
-    shader.setInt("texture1", 0);
-    //shader.setInt("texture2", 1);
+    glm::vec3 sunLightRotations[] = {
+        glm::vec3(1.5f, 2.f, 1.8f)
+    };
+    lightShader.use();
+    lightShader.setInt("numberOfPLight", sizeof(pointLightPositions) / sizeof(pointLightPositions[0]));
+    lightShader.setInt("numberOfSun", sizeof(sunLightRotations) / sizeof(sunLightRotations[0]));
 
     // render loop
     while (!glfwWindowShouldClose(window))
     {
+        sleep(0.01);
         // per-frame time logic
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-        //std::cout << glfwGetTime() << std::endl;
 
         // input
         processInput(window);
+        glfwSetKeyCallback(window, key_callback);
 
         // render
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // also clear the depth buffer now!
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-        // bind textures on corresponding texture units
-        //bindTextures(texture1);
-        //bindTextures(texture2);
-        glBindTexture(GL_TEXTURE_2D, texture1);
-
-        // render container
-        glBindVertexArray(buffers.VAO);
-        shader.use();
-
-        shader.setProjView();
-
-        // draw
-        //glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-        //for (unsigned int i = 0; i < 3; i++) {
-        //    shader.multCubes(i, cubePositions);
-        //    glDrawArrays(GL_TRIANGLES, 0, 36);
-        //}
-        for (unsigned int i = 0; i < cubePositions->length() + 1; i++)
-        {
-            shader.multCubes(i, cubePositions);
-            glDrawArrays(GL_TRIANGLES, 0, 36);
+        if (cameraSwitch == false) {
+            player.Update(deltaTime);
+            camera.Update(deltaTime, player.Position);
         }
-        player.Update(deltaTime);
-        camera.Update(deltaTime, player.Position);
 
-        glBindTexture(GL_TEXTURE_2D, texture3);
-        shader.shaderPlayer(player);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        if (mouseSwitch)
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        else if (!mouseSwitch)
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
+        lightShader.use();
+        lightShader.setProjView();
+        
+        //Lights
+        for (int i = 0; i < sizeof(pointLightPositions) / sizeof(pointLightPositions[0]); i++) {
+            light.drawPointLight(lightShader, pointLightPositions[i], i);
+        }
+
+        for (int i = 0; i < sizeof(sunLightRotations) / sizeof(sunLightRotations[0]); i++) {
+            light.drawSun(lightShader, sunLightRotations[i], i);
+        }
+
+        //Player
+        player.draw(lightShader, robot, glm::vec3(0.05f, 0.05f, 0.05f));
+
+        //Objects
+        room.draw(lightShader, glm::vec3(0.f, -0.05f, 0.f), 0.f, glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f, 1.f, 1.f));
+        //box.draw(lightShader, glm::vec3(1.0f, 0.f, 0.f), 0.f, glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f, 1.f, 1.f));
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-
-    // optional: de-allocate all resources once they've outlived their purpose:
-    buffers.cleanupBuffers();
-
     // glfw: terminate, clearing all previously allocated GLFW resources.
     glfwTerminate();
     return 0;

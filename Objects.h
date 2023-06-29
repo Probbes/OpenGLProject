@@ -1,62 +1,70 @@
 #pragma once
 
-#include <CameraClass.h>
+#include <glad/glad.h> 
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <iostream>
+
+#include <Model.h>
+#include <SimpleGeometry.h>
+
 
 
 // timing
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
 
-static Camera camera(glm::vec3(-1.0f, 1.0f, -0.0f));
 
 class Player {
 public:
-    glm::vec3 Position;
+    glm::vec3 Position = glm::vec3(0.0f, 0.0f, 0.0f);
     float MovementSpeed = 10.0f;
 
     float jumpVelocity = 0.0f;
     float fallVelocity = 0.0f;
     float gravity = 9.8f * 2.0f; // Adjust this value as needed
     bool isJumping = false;
-    float groundLevel = -4.5f;
+    float groundLevel = 0.0f;
     bool ground = true;
+    float playerYaw=0.f;
+    float speed = 0.3f;
 
-    Player(glm::vec3 position) {
-        //float MovementSpeed = 1.0f;
-        //glm::vec3 playerposition = {
-        //    glm::vec3(Position)
-        //};
-        Position.x = position.x;
-        Position.y = groundLevel;
-        Position.z = position.z;
+    Player() {
     }
 
     void ProcessKeyboardPlayer(Camera_Movement direction, float deltaTime)
     {
         float velocity = MovementSpeed * deltaTime;
-        float angleRad = glm::radians(camera.Yaw);
+        playerYaw = camera.Yaw;
+        float angleRad = glm::radians(playerYaw);
         if (direction == FORWARD) {
-            Position.x += cos(angleRad) * velocity;
-            Position.z -= sin(-angleRad) * velocity;
+            Position.x += cos(angleRad) * velocity * speed;
+            Position.z -= sin(-angleRad) * velocity * speed;
         }
         if (direction == BACKWARD) {
-            Position.x -= cos(angleRad) * velocity;
-            Position.z += sin(-angleRad) * velocity;
+            Position.x -= cos(angleRad) * velocity * speed;
+            Position.z += sin(-angleRad) * velocity * speed;
         }
         if (direction == LEFT) {
-            Position.x -= sin(-angleRad) * velocity;
-            Position.z -= cos(angleRad) * velocity;
+            Position.x -= sin(-angleRad) * velocity * speed;
+            Position.z -= cos(angleRad) * velocity * speed;
         }
         if (direction == RIGHT) {
-            Position.x += sin(-angleRad) * velocity;
-            Position.z += cos(angleRad) * velocity;
+            Position.x += sin(-angleRad) * velocity * speed;
+            Position.z += cos(angleRad) * velocity * speed;
         } 
+       
     }
 
     void Jump()
     {
         if (!isJumping) {
-            jumpVelocity = 12.0f; // Adjust this value as needed
+            jumpVelocity = 8.0f; // Adjust this value as needed
             isJumping = true;
         }
     }
@@ -86,11 +94,10 @@ public:
         if (Position.y < -100.0f) {
             Position = glm::vec3(0.0f, groundLevel, 0.0f);
         }
-        std::cout << fallVelocity << std::endl;
     }
 
     void walkOnGround() {
-        if (Position.x > -5.5f && Position.x < 15.5f && Position.z > -5.5f && Position.z < 15.5f && Position.y > -4.6f) {
+        if (Position.x > -150.5f && Position.x < 250.5f && Position.z > -150.5f && Position.z < 250.5f && Position.y > -4.6f) {
             ground = true;
             fallVelocity = 0.0f;
         }
@@ -104,89 +111,43 @@ public:
         Position.y += fallVelocity * deltaTime;
     }
 
+    void draw(Shader& shader, Model model, glm::vec3 scale) {
+        model.draw(shader, glm::vec3(Position.x, Position.y, Position.z), -playerYaw - 90.f, glm::vec3(0.0f, 1.0f, 0.0f), scale);
+    }
 };
 
-Player player(glm::vec3(0.0f, -4.5f, 0.0f));
+Player player;
 
-float vertices[] = {
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,   //0
-         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+class MCube : private CCube {
+public: 
+    
+    MCube(glm::vec3 color, float shininess) {
+        cubeColor = color;
+        cubeShininess = shininess;
+    }
 
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    void draw(Shader& shader, glm::vec3 pos, glm::vec3 scale) {
+        setMaterial(shader);
 
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, pos);
+        model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::scale(model, scale);
+        shader.setMat4("model", model);
+        glBindVertexArray(VAO);
+        glDrawElements(GL_TRIANGLES, (indices.size() * sizeof(float)) / indicesRow, GL_UNSIGNED_INT, 0);
+        //glBindVertexArray(0);        
+    }
 
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+private:
+    glm::vec3 cubeColor = glm::vec3(0.2f, 0.6f, 0.11f);
+    float cubeShininess = 32.0f;
 
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,   //36
-        //---
-
-    /*
-         -0.5f, -0.5f,  0.0f, 0.0f, 0.0f,
-          0.0f,  0.5f,  0.0f, 1.0f, 0.0f,
-         -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-          0.0f,  0.5f, -0.5f, 1.0f, 1.0f,
-          0.0f,  0.5f,  0.0f, 1.0f, 0.0f,
-         -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-
-          0.0f,  0.5f,  0.0f, 1.0f, 1.0f,
-          0.0f,  0.5f, -0.5f, 1.0f, 0.0f,
-          0.5f, -0.5f,  0.0f, 0.0f, 1.0f,
-          0.5f, -0.5f,  0.0f, 0.0f, 1.0f,
-          0.5f, -0.5f,  -0.5f, 0.0f, 0.0f,
-          0.0f,  0.5f, -0.5f, 1.0f, 0.0f,
-
-          0.5f, -0.5f,  0.0f,  0.0f, 0.0f,
-          0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-         -0.5f, -0.5f, -0.5f, 1.0f, 1.0f,
-         -0.5f, -0.5f, -0.5f, 1.0f, 1.0f,
-         0.5f, -0.5f,  0.0f,  0.0f, 0.0f,
-         -0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-
-         -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
-         0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-         0.0f,  0.5f, 0.0f, 0.0f, 1.0f,
-
-         -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-          0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
-          0.0f,  0.5f, -0.5f, 0.0f, 1.0f,
-          */
+    void setMaterial(Shader& shader) {
+        shader.setVec3("material.ambient", cubeColor);
+        shader.setVec3("material.diffuse", cubeColor);
+        shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+        shader.setFloat("material.shininess", cubeShininess);
+        shader.setInt("matOrText", 1);
+    }
 };
-
-/*
-unsigned int indices[] = {
-    0, 1, 3,   // first triangle
-    1, 2, 3    // second triangle,
-};
-*/
