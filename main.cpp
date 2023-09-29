@@ -81,7 +81,7 @@ int main()
 
     char pathBox[] = "../models/Box/Box.obj";
     Model box(pathBox);
-
+    //TEST
     Light light;
 
     glm::vec3 pointLightPositions[] = {
