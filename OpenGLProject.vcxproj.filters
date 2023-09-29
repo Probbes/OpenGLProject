@@ -18,28 +18,46 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="glad.c">
+    <ClCompile Include="Headers\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ShaderClass.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="Headers\CameraClass.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="glad.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="Headers\Collision.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CameraClass.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="Headers\glad.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Inputs.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="Headers\Inputs.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TexturesHeader.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="Headers\Lights.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Buffers.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="Headers\mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Objects.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\ShaderClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\SimpleGeometry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Text.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\TexturesHeader.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

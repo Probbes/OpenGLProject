@@ -71,8 +71,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\Probb\Documents\OpenGL\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Probb\Documents\OpenGL\Libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>../assimp/include;Headers;../Include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\antoi\Documents\OpenGL\Libs;C:\Users\antoi\Documents\OpenGL\assimp\lib\Debug;../assimp/lib/Debug;../Libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -113,8 +113,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;user32.lib;gdi32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\Probb\Documents\OpenGL\glfw-3.3.8;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;user32.lib;gdi32.lib;shell32.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\antoi\Documents\OpenGL\assimp\lib\Debug;../Libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -134,16 +134,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="glad.c" />
+    <ClCompile Include="Headers\glad.c" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Buffers.h" />
-    <ClInclude Include="CameraClass.h" />
-    <ClInclude Include="glad.h" />
-    <ClInclude Include="Inputs.h" />
-    <ClInclude Include="ShaderClass.h" />
-    <ClInclude Include="TexturesHeader.h" />
+    <ClInclude Include="Headers\CameraClass.h" />
+    <ClInclude Include="Headers\Collision.h" />
+    <ClInclude Include="Headers\glad.h" />
+    <ClInclude Include="Headers\Inputs.h" />
+    <ClInclude Include="Headers\Lights.h" />
+    <ClInclude Include="Headers\mesh.h" />
+    <ClInclude Include="Headers\Model.h" />
+    <ClInclude Include="Headers\Objects.h" />
+    <ClInclude Include="Headers\ShaderClass.h" />
+    <ClInclude Include="Headers\SimpleGeometry.h" />
+    <ClInclude Include="Headers\Text.h" />
+    <ClInclude Include="Headers\TexturesHeader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\shader.fs" />

@@ -73,13 +73,13 @@ int main()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    char pathRobot[] = "models/Robot/LilRobot.obj";
+    char pathRobot[] = "../models/Robot/LilRobot.obj";
     Model robot(pathRobot);
 
-    char pathRoom[] = "models/Room/room.obj";
+    char pathRoom[] = "../models/Room/room.obj";
     Model room(pathRoom);
 
-    char pathBox[] = "models/Box/Box.obj";
+    char pathBox[] = "../models/Box/Box.obj";
     Model box(pathBox);
 
     Light light;

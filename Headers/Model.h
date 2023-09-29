@@ -15,8 +15,6 @@
 #include <assimp/postprocess.h>
 
 #include <mesh.h>
-//#include <ShaderClass.h>
-#include <Bullet.h>
 
 #include <string>
 #include <fstream>
