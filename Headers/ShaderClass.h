@@ -6,15 +6,13 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
 #include <glad/glad.h>
-
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <iostream>
 
-#include <CameraClass.h>
+#include "CameraClass.h"
 
 //Camera shaderCamera;//(glm::vec3(0.0f, 0.0f, 3.0f));
 
@@ -102,23 +100,19 @@ public:
     {
         glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
     }
-
+    /*
     void setProjView()
     {
         glm::mat4 view = glm::mat4(1.0f);
         glm::mat4 projection = glm::mat4(1.0f);
 
-        //view = glm::translate(view, glm::vec3( 1.0f, 0.0f, -3.0f));
-        //projection = glm::perspective(glm::radians( 90.0f), 800.0f / 600.0f, 0.1f, 100.0f);
-
         view = camera.GetViewMatrix();
-        //view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 
         setMat4("view", view);
         setMat4("projection", projection);
     }
-
+    */
     void setVec2(const std::string& name, const glm::vec2& value) const
     {
         glUniform2fv(glGetUniformLocation(ID, name.c_str()), 1, &value[0]);

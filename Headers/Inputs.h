@@ -1,5 +1,5 @@
 #pragma once
-
+/*
 #include <Objects.h>
 
 bool cameraSwitch = true;
@@ -19,10 +19,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         cameraSwitch = !cameraSwitch;
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-    if (!cameraSwitch) {
-        if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
-            player.Jump();
-    };
+    //if (!cameraSwitch) {
+    //    if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+    //        player.Jump();
+    //};
     if (key == GLFW_KEY_Z && action == GLFW_PRESS)
         mouseSwitch = !mouseSwitch;
 }
@@ -31,7 +31,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow* window){
+void processInput(GLFWwindow* window, Player player, Camera camera){
 
     if (!cameraSwitch) {
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
@@ -97,3 +97,4 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
     camera.ProcessMouseScroll(static_cast<float>(yoffset));
 }
+*/

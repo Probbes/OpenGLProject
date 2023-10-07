@@ -1,17 +1,15 @@
 #pragma once
 
 #include <glad/glad.h> 
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <iostream>
 
-#include <Model.h>
-#include <SimpleGeometry.h>
+#include "Model.h"
+#include "SimpleGeometry.h"
 
 
 
@@ -34,11 +32,13 @@ public:
     float playerYaw=0.f;
     float speed = 0.3f;
 
-    Player() {
+    Player(Camera camera) {
+        this->camera = camera;
     }
 
     void ProcessKeyboardPlayer(Camera_Movement direction, float deltaTime)
     {
+        std::cout << "ProcessKeyboardPlayer" << std::endl;
         float velocity = MovementSpeed * deltaTime;
         playerYaw = camera.Yaw;
         float angleRad = glm::radians(playerYaw);
@@ -73,8 +73,6 @@ public:
     void Update(float deltaTime)
     {
         // Apply gravity to the jump velocity
-        
-
         walkOnGround();
         jumpVelocity -= gravity * deltaTime;
 
@@ -114,9 +112,11 @@ public:
     void draw(Shader& shader, Model model, glm::vec3 scale) {
         model.draw(shader, glm::vec3(Position.x, Position.y, Position.z), -playerYaw - 90.f, glm::vec3(0.0f, 1.0f, 0.0f), scale);
     }
+private:
+    Camera camera;
 };
 
-Player player;
+//Player player;
 
 class MCube : private CCube {
 public: 

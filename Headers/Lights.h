@@ -1,14 +1,14 @@
 #pragma once
 
-#include <SimpleGeometry.h>
+#include "SimpleGeometry.h"
 
 class Light {
 public:
 	CCube rec;
 	glm::vec3 color = glm::vec3(1.f, 1.f, 1.f);
 	unsigned int numberOfPLight = 0;
-	Light() {
-
+	Light(Camera camera) {
+		this->camera = camera;
 	}
 
 	void drawCube(Shader& shader) {
@@ -44,4 +44,7 @@ public:
 		shader.setVec3("viewPos", camera.Position);
 		shader.setVec3("lightPower", 1.f, 1.f, 1.f);
 	}
+
+private:
+	Camera camera;
 };

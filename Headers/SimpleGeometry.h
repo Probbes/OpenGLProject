@@ -1,26 +1,12 @@
 #pragma once
-
-///////////////////////////////////////////////////////////////////////////////
-// Sphere.h
-// ========
-// Sphere for OpenGL with (radius, sectors, stacks)
-// The min number of sectors is 3 and the min number of stacks are 2.
-// The default up axis is +Z axis. You can change the up axis with setUpAxis():
-// X=1, Y=2, Z=3.
-//
-//  AUTHOR: Song Ho Ahn (song.ahn@gmail.com)
-// CREATED: 2017-11-01
-// UPDATED: 2023-03-11
-///////////////////////////////////////////////////////////////////////////////
-
 #ifndef GEOMETRY_SPHERE_H
 #define GEOMETRY_SPHERE_H
-
 #include <vector>
 #include <math.h>
 
-#include <ShaderClass.h>
+#include "ShaderClass.h"
 
+//CSphere code made by Song Ho Ahn
 class CSphere
 {
 public:

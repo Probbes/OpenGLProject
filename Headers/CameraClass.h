@@ -8,12 +8,6 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-
-// settings
-const unsigned int SCR_WIDTH = 1280;
-const unsigned int SCR_HEIGHT = 720;
-
-
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 enum Camera_Movement {
     FORWARD,
@@ -110,7 +104,7 @@ public:
         if (Pitch < -89.0f) {
             Pitch = -89.0f;
         }
-        //updateCameraVectorsFree();
+        updateCameraVectorsFree();
     }
 
     void ProcessMouseMovementFree(float xoffset, float yoffset, GLboolean constrainPitch = true)
@@ -183,4 +177,4 @@ private:
     }
 };
 
-static Camera camera(glm::vec3(-1.0f, 1.0f, -0.0f));
+//static Camera camera(glm::vec3(-1.0f, 1.0f, -0.0f));
