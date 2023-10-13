@@ -115,5 +115,7 @@
     <None Include="Shader\shader.vs">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="Shader\lightShader.fs" />
+    <None Include="Shader\lightShader.vs" />
   </ItemGroup>
 </Project>

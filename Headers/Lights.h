@@ -5,10 +5,8 @@
 class Light {
 public:
 	CCube rec;
-	glm::vec3 color = glm::vec3(1.f, 1.f, 1.f);
-	unsigned int numberOfPLight = 0;
-	Light(Camera camera) {
-		this->camera = camera;
+
+	Light() {
 	}
 
 	void drawCube(Shader& shader) {
@@ -21,8 +19,16 @@ public:
 		glDrawElements(GL_TRIANGLES, (rec.indices.size() * sizeof(float)) / rec.indicesRow, GL_UNSIGNED_INT, 0);
 		//glBindVertexArray(0);    
 	}
+};
 
-	void drawPointLight(Shader& shader, glm::vec3 pos, unsigned int i) {
+class PointLight : public Light {
+public:
+	glm::vec3 color = glm::vec3(1.f, 1.f, 1.f);
+	glm::vec3 pos = glm::vec3(1.f, 1.f, 1.f);
+
+	PointLight(Camera icamera, glm::vec3 icolor, glm::vec3 ipos) : camera (icamera), color(icolor), pos(ipos) {}
+
+	void draw(Shader& shader, unsigned int i) {
 		shader.setVec3("light[" + std::to_string(i) + "].ambient", color);
 		shader.setVec3("light[" + std::to_string(i) + "].diffuse", color);
 		shader.setVec3("light[" + std::to_string(i) + "].specular", 1.0f, 1.0f, 1.0f);
@@ -35,7 +41,18 @@ public:
 		shader.setFloat("light[" + std::to_string(i) + "].quadratic", 0.032f);
 	}
 
-	void drawSun(Shader& shader, glm::vec3 rot, unsigned int i) {
+private:
+	Camera camera;
+};
+
+class SunLight : public Light {
+public:
+	glm::vec3 color = glm::vec3(1.f, 1.f, 1.f);
+	glm::vec3 rot = glm::vec3(1.f, 1.f, 1.f);
+
+	SunLight(Camera icamera, glm::vec3 icolor, glm::vec3 irot) :camera(icamera), color(icolor), rot(irot) {}
+
+	void draw(Shader& shader, unsigned int i) {
 		shader.setVec3("dirLight[" + std::to_string(i) + "].ambient", color);
 		shader.setVec3("dirLight[" + std::to_string(i) + "].diffuse", color);
 		shader.setVec3("dirLight[" + std::to_string(i) + "].specular", 1.0f, 1.0f, 1.0f);

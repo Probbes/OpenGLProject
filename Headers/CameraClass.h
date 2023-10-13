@@ -175,6 +175,6 @@ private:
         Position.y = playerPosition.y + 1.0f * cos(2 * M_PI * (Theta / 360));
         Position.z = playerPosition.z - 1.0f * sin(2 * M_PI * (Theta / 360)) * sin(2 * M_PI * (Yaw / 360));
     }
-};
+}; 
 
 //static Camera camera(glm::vec3(-1.0f, 1.0f, -0.0f));

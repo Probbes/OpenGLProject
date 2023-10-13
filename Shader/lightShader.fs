@@ -34,8 +34,6 @@ in vec3 FragPos;
 in vec2 TexCoords;
 in vec4 vertexColor;
 
-
-
 uniform vec3 viewPos;
 uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_specular1;
@@ -44,8 +42,6 @@ uniform vec3 lightPower;
 //uniform vec3 lightDirection = vec3(0.0);
 
 uniform int matOrText;
-uniform int numberOfPLight = 0;
-uniform int numberOfSun = 0;
 
 uniform Material material;
 uniform PointLight light[10];
@@ -54,27 +50,28 @@ uniform DirLight dirLight[4];
 vec3 CalcPointLight(PointLight light);
 vec3 CalcDirLight(DirLight light);
 
+uniform int numberOfSun = 0;
+uniform int numberOfPointLight = 0;
+
 void main()
 {
-    vec3 lightDir = vec3(0);
-    vec3 result = vec3(0);
-    if (numberOfSun > 0){
-        for (int i = 0; i < numberOfSun; i++){
-            result += CalcDirLight(dirLight[i]);
+    vec3 result;
+    for (int i=0; i < numberOfSun; i++){
+        result = result + CalcDirLight(dirLight[i]);
+    }
+    if (numberOfPointLight != 0) {
+        for (int j=0; j < numberOfPointLight; j++){
+            result = result + CalcPointLight(light[j]);
         }
     }
-    if (numberOfPLight > 0){
-        for (int i = 0; i < numberOfPLight; i++){
-            result += CalcPointLight(light[i]);
-        }
-    }
-    
-    //FragColor = vec4(abs(Normal), 1.0);
-    //FragColor = vec4(vec3(gl_FragCoord.z), 1.0);
+
     vec4 texColor = texture(texture_diffuse1, TexCoords);
     if(texColor.a < 0.1)
         discard;
     FragColor = vec4(result, 1.0);
+    //FragColor = vec4(abs(Normal), 1.0);
+    //FragColor = vec4(vec3(gl_FragCoord.z), 1.0);
+
 }
 
 vec3 CalcPointLight(PointLight light)

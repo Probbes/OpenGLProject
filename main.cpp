@@ -92,27 +92,27 @@ int main()
     char pathRobot[] = "../models/Robot/LilRobot.obj";
     Model robot(pathRobot);
 
-    char pathRoom[] = "../models/Room/room.obj";
-    Model room(pathRoom);
+    //char pathRoom[] = "../models/Room/room.obj";
+    //Model room(pathRoom);
 
     char pathBox[] = "../models/Box/Box.obj";
     Model box(pathBox);
-    
-    Light light(camera);
 
-    glm::vec3 pointLightPositions[] = {
-        glm::vec3(8.f, 2.f, 8.f),
-        glm::vec3(0.f, 2.f, 0.f)
+    SunLight sunLight[] = {
+        SunLight(camera, glm::vec3(1.f, 0.5f, 0.5f), glm::vec3(1.f, 0.f, 0.f)),SunLight(camera, glm::vec3(0.5f, 0.f, 0.5f), glm::vec3(0.f, 0.f, 1.f))
     };
+    int sunLightNumber = sizeof(sunLight) / sizeof(sunLight[0]);
 
-    glm::vec3 sunLightRotations[] = {
-        glm::vec3(1.5f, 2.f, 1.8f)
+    PointLight pointLight[] = {
+        PointLight(camera, glm::vec3(1.f, 0.5f, 0.5f), glm::vec3(1.f, 0.f, 0.f)),PointLight(camera, glm::vec3(0.5f, 0.f, 0.5f), glm::vec3(0.f, 0.f, 1.f))
     };
+    int pointLightNumber = sizeof(pointLight) / sizeof(pointLight[0]);
+
     lightShader.use();
-    lightShader.setInt("numberOfPLight", sizeof(pointLightPositions) / sizeof(pointLightPositions[0]));
-    lightShader.setInt("numberOfSun", sizeof(sunLightRotations) / sizeof(sunLightRotations[0]));
-
-    
+    glm::mat4 view = glm::mat4(1.0f);
+    glm::mat4 projection = glm::mat4(1.0f);
+    lightShader.setInt("numberOfPointLight", sizeof(pointLight) / sizeof(pointLight[0]));
+    lightShader.setInt("numberOfSun", sizeof(sunLight) / sizeof(sunLight[0]));
 
     // render loop
     while (!glfwWindowShouldClose(window))
@@ -152,30 +152,33 @@ int main()
         else if (!mouseSwitch)
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
-        lightShader.use();
-        glm::mat4 view = glm::mat4(1.0f);
-        glm::mat4 projection = glm::mat4(1.0f);
-
         view = camera.GetViewMatrix();
         projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 
         lightShader.setMat4("view", view);
         lightShader.setMat4("projection", projection);
-        //Lights
-        for (int i = 0; i < sizeof(pointLightPositions) / sizeof(pointLightPositions[0]); i++) {
-            light.drawPointLight(lightShader, pointLightPositions[i], i);
-        }
 
-        for (int i = 0; i < sizeof(sunLightRotations) / sizeof(sunLightRotations[0]); i++) {
-            light.drawSun(lightShader, sunLightRotations[i], i);
+        //Lights
+        ImGui::Text("--------------------------------");
+        pointLight[0].pos.x = sin(glfwGetTime()) * 1.f;
+        for (int i = 0; i < sunLightNumber; i++) {
+            ImGui::Text("SunLight %i color %f %f %f",i, sunLight[i].color.x, sunLight[i].color.y, sunLight[i].color.z);
+            ImGui::Text("SunLight %i rotation %f %f %f", i, sunLight[i].rot.x, sunLight[i].rot.y, sunLight[i].rot.z);
+            sunLight[i].draw(lightShader, i);
+        }
+        for (int i = 0; i < pointLightNumber; i++) {
+            ImGui::Text("PointLight %i color %f %f %f", i, pointLight[i].color.x, pointLight[i].color.y, pointLight[i].color.z);
+            ImGui::Text("PointLight %i rotation %f %f %f", i, pointLight[i].pos.x, pointLight[i].pos.y, pointLight[i].pos.z);
+            pointLight[i].draw(lightShader, i);
         }
 
         //Player
         player.draw(lightShader, robot, glm::vec3(0.05f, 0.05f, 0.05f));
 
         //Objects
-        room.draw(lightShader, glm::vec3(0.f, -0.05f, 0.f), 0.f, glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f, 1.f, 1.f));
 
+
+        //End
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 

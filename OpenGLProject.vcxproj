@@ -168,6 +168,8 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shader\lightShader.fs" />
+    <None Include="Shader\lightShader.vs" />
     <None Include="Shader\shader.fs" />
     <None Include="Shader\shader.vs" />
   </ItemGroup>
