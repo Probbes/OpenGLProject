@@ -145,9 +145,11 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Headers\Application.h" />
     <ClInclude Include="Headers\CameraClass.h" />
     <ClInclude Include="Headers\Collision.h" />
     <ClInclude Include="Headers\glad.h" />
+    <ClInclude Include="Headers\Gui.h" />
     <ClInclude Include="Headers\Inputs.h" />
     <ClInclude Include="Headers\Lights.h" />
     <ClInclude Include="Headers\mesh.h" />

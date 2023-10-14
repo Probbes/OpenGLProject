@@ -38,7 +38,6 @@ public:
 
     void ProcessKeyboardPlayer(Camera_Movement direction, float deltaTime)
     {
-        std::cout << "ProcessKeyboardPlayer" << std::endl;
         float velocity = MovementSpeed * deltaTime;
         playerYaw = camera.Yaw;
         float angleRad = glm::radians(playerYaw);
