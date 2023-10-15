@@ -34,15 +34,20 @@ public:
     vector<Mesh>    meshes;
     string directory;
     bool gammaCorrection;
+    glm::vec3 pos = glm::vec3(0.f, 0.f, 0.f);
+    float rotation = 0.f;
+    glm::vec3 rotationAxis = glm::vec3(0.f, 0.f, 1.f);
+    glm::vec3 scale = glm::vec3(1.f, 1.f, 1.f);
 
     // constructor, expects a filepath to a 3D model.
-    Model(string const& path, bool gamma = false) : gammaCorrection(gamma)
+    Model(string const& path, glm::vec3 ipos, float irotation, glm::vec3 irotationAxis, glm::vec3 iscale, bool gamma = false)
+        : pos(ipos), rotation(irotation), rotationAxis(irotationAxis), scale(iscale), gammaCorrection(gamma)
     {
         loadModel(path);
     }
 
     // draws the model, and thus all its meshes
-    void draw(Shader& shader, glm::vec3 pos, float rotation, glm::vec3 rotationAxis, glm::vec3 scale)
+    void draw(Shader& shader)
     {
         for (unsigned int i = 0; i < meshes.size(); i++) {
             glm::mat4 model = glm::mat4(1.0f);

@@ -23,13 +23,17 @@
 
 Camera camera(glm::vec3(-1.0f, 1.0f, -0.0f));
 Player player(camera);
-bool cameraSwitch = true;
-bool mouseSwitch = true;
+bool cameraSwitch = true; // true = free cam mvmt; false = player camera mvmt
+bool mouseSwitch = true; // true = Mouse moves camera; false = mouse cursor
 const unsigned int SCR_WIDTH = 1280;
 const unsigned int SCR_HEIGHT = 720;
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
+
+// timing
+float deltaTime = 0.0f;	// time between current frame and last frame
+float lastFrame = 0.0f;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -171,9 +175,8 @@ public:
 	}
 
     void initObj() {
-        models.push_back(Model("../models/Robot/LilRobot.obj"));
-        models.push_back(Model("../models/Box/Box.obj"));
-        //Model room("../models/Room/room.obj");
+        models.push_back(Model("../models/Robot/LilRobot.obj", glm::vec3(1.f, 1.f, 1.f), 0.f, glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f, 1.f, 1.f)));
+        models.push_back(Model("../models/Box/Box.obj", glm::vec3(1.f, 1.f, 1.f), 0.f, glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f, 1.f, 1.f)));
         
         sunLights.push_back(SunLight(camera, glm::vec3(1.f, 0.5f, 0.5f), glm::vec3(1.f, 0.f, 0.f)));
         sunLights.push_back(SunLight(camera, glm::vec3(0.5f, 0.f, 0.5f), glm::vec3(0.f, 0.f, 1.f)));
@@ -191,7 +194,8 @@ public:
         // render loop
         while (!glfwWindowShouldClose(window))
         {
-            sleep(0.01);
+            sleep(0.01);    //block framerate max
+
             // per-frame time logic
             float currentFrame = static_cast<float>(glfwGetTime());
             deltaTime = currentFrame - lastFrame;
@@ -214,16 +218,18 @@ public:
             glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+            //Free cam or player cam
             if (cameraSwitch == false) {
-                player.Update(deltaTime);
                 camera.Update(deltaTime, player.Position);
             }
 
+            //Free cursor or mouse moves cam
             if (mouseSwitch)
                 glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             else if (!mouseSwitch)
                 glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
+            //Camere & Shader WIP
             view = camera.GetViewMatrix();
             projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 
@@ -249,7 +255,7 @@ public:
 
             //Objects
             for (int i = 1; i < models.size(); i++) {
-                models[i].draw(shaders[0], glm::vec3(1.f, 1.f, 1.f), 0.f, glm::vec3(1.f, 0.f, 0.f), glm::vec3(1.f, 1.f, 1.f));
+                models[i].draw(shaders[0]);
             }
 
             //End

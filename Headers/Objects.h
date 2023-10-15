@@ -11,13 +11,6 @@
 #include "Model.h"
 #include "SimpleGeometry.h"
 
-
-
-// timing
-float deltaTime = 0.0f;	// time between current frame and last frame
-float lastFrame = 0.0f;
-
-
 class Player {
 public:
     glm::vec3 Position = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -60,6 +53,7 @@ public:
        
     }
 
+    /*
     void Jump()
     {
         if (!isJumping) {
@@ -107,9 +101,13 @@ public:
         fallVelocity -= gravity * deltaTime;
         Position.y += fallVelocity * deltaTime;
     }
-
+    */
     void draw(Shader& shader, Model model, glm::vec3 scale) {
-        model.draw(shader, glm::vec3(Position.x, Position.y, Position.z), -playerYaw - 90.f, glm::vec3(0.0f, 1.0f, 0.0f), scale);
+        //model.draw(shader, glm::vec3(Position.x, Position.y, Position.z), -playerYaw - 90.f, glm::vec3(0.0f, 1.0f, 0.0f), scale);
+        model.scale = scale;
+        model.pos = glm::vec3(Position.x, Position.y, Position.z);
+        model.rotation = -playerYaw - 90.f;
+        model.draw(shader);
     }
 private:
     Camera camera;
