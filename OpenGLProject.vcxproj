@@ -152,6 +152,7 @@
     <ClInclude Include="Headers\Gui.h" />
     <ClInclude Include="Headers\Inputs.h" />
     <ClInclude Include="Headers\Lights.h" />
+    <ClInclude Include="Headers\Map.h" />
     <ClInclude Include="Headers\mesh.h" />
     <ClInclude Include="Headers\Model.h" />
     <ClInclude Include="Headers\Objects.h" />
