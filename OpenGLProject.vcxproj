@@ -71,8 +71,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>imgui/;../assimp/include;Headers;../Include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\antoi\Documents\OpenGL\Libs;C:\Users\antoi\Documents\OpenGL\assimp\lib\Debug;../assimp/lib/Debug;../Libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\antoi\Documents\OpenGL\OpenGLProject\src;C:\Users\antoi\Documents\OpenGL\vcpkg_installed\x64-windows\x64-windows\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\antoi\Documents\OpenGL\vcpkg_installed\x64-windows\x64-windows\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgEnableManifest>true</VcpkgEnableManifest>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -108,12 +111,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Probb\Documents\OpenGL\OpenGLProject;C:\Users\Probb\Documents\OpenGL\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;user32.lib;gdi32.lib;shell32.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Users\antoi\Documents\OpenGL\assimp\lib\Debug;../Libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -134,45 +137,29 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Headers\glad.c" />
-    <ClCompile Include="imgui\imgui.cpp" />
-    <ClCompile Include="imgui\imgui_demo.cpp" />
-    <ClCompile Include="imgui\imgui_draw.cpp" />
-    <ClCompile Include="imgui\imgui_impl_glfw.cpp" />
-    <ClCompile Include="imgui\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="imgui\imgui_tables.cpp" />
-    <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Headers\Application.h" />
-    <ClInclude Include="Headers\CameraClass.h" />
-    <ClInclude Include="Headers\Collision.h" />
-    <ClInclude Include="Headers\glad.h" />
-    <ClInclude Include="Headers\Gui.h" />
-    <ClInclude Include="Headers\Inputs.h" />
-    <ClInclude Include="Headers\Lights.h" />
-    <ClInclude Include="Headers\Map.h" />
-    <ClInclude Include="Headers\mesh.h" />
-    <ClInclude Include="Headers\Model.h" />
-    <ClInclude Include="Headers\Objects.h" />
-    <ClInclude Include="Headers\ShaderClass.h" />
-    <ClInclude Include="Headers\SimpleGeometry.h" />
-    <ClInclude Include="Headers\Text.h" />
-    <ClInclude Include="Headers\TexturesHeader.h" />
-    <ClInclude Include="imgui\imconfig.h" />
-    <ClInclude Include="imgui\imgui.h" />
-    <ClInclude Include="imgui\imgui_impl_glfw.h" />
-    <ClInclude Include="imgui\imgui_impl_opengl3.h" />
-    <ClInclude Include="imgui\imgui_impl_opengl3_loader.h" />
-    <ClInclude Include="imgui\imgui_internal.h" />
-    <ClInclude Include="imgui\imstb_rectpack.h" />
-    <ClInclude Include="imgui\imstb_textedit.h" />
-    <ClInclude Include="imgui\imstb_truetype.h" />
+    <ClInclude Include="src\Application.h" />
+    <ClInclude Include="src\CameraClass.h" />
+    <ClInclude Include="src\Collision.h" />
+    <ClInclude Include="src\Gui.h" />
+    <ClInclude Include="src\Inputs.h" />
+    <ClInclude Include="src\Lights.h" />
+    <ClInclude Include="src\Map.h" />
+    <ClInclude Include="src\mesh.h" />
+    <ClInclude Include="src\Model.h" />
+    <ClInclude Include="src\Objects.h" />
+    <ClInclude Include="src\ShaderClass.h" />
+    <ClInclude Include="src\SimpleGeometry.h" />
+    <ClInclude Include="src\Text.h" />
+    <ClInclude Include="src\TexturesHeader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\lightShader.fs" />
     <None Include="Shader\lightShader.vs" />
+    <None Include="Shader\mapShader.fs" />
+    <None Include="Shader\mapShader.vs" />
     <None Include="Shader\shader.fs" />
     <None Include="Shader\shader.vs" />
   </ItemGroup>

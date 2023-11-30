@@ -71,6 +71,7 @@ void main()
     FragColor = vec4(result, 1.0);
     //FragColor = vec4(abs(Normal), 1.0);
     //FragColor = vec4(vec3(gl_FragCoord.z), 1.0);
+    //FragColor = vec4(0.8,0.8,0.8,1.0);
 
 }
 
