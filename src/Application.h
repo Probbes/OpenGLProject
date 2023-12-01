@@ -163,7 +163,6 @@ public:
 
 	void init() {
         shaders.push_back(Shader("Shader/lightshader.vs", "Shader/lightShader.fs"));
-        shaders.push_back(Shader("Shader/textShader.vs", "Shader/textShader.fs"));
         shaders.push_back(Shader("Shader/mapShader.vs", "Shader/mapShader.fs"));
 
         //Initialize some parameters
@@ -191,17 +190,17 @@ public:
         pointLightsNumber = (int)pointLights.size();
         shaders[0].setInt("numberOfPointLight",pointLightsNumber);
 
-        shaders[2].use();
-        //map.push_back(Map());
-        shaders[2].setInt("numberOfSun", sunLightsNumber);
-        shaders[2].setInt("numberOfPointLight", pointLightsNumber);
+        //shaders[1].use();
+        map.push_back(Map(camera));
+        //shaders[1].setInt("numberOfSun", sunLightsNumber);
+        //shaders[1].setInt("numberOfPointLight", pointLightsNumber);
     }
 
     void loop() {
         // render loop
         while (!glfwWindowShouldClose(window))
         {
-            sleep(0.01);    //block framerate max
+            sleep(0.001);    //block framerate max
             // per-frame time logic
             float currentFrame = static_cast<float>(glfwGetTime());
             deltaTime = currentFrame - lastFrame;
@@ -248,13 +247,9 @@ public:
             pointLights[0].pos.z = abs(sin(glfwGetTime())) * 10.f;
             pointLights[0].pos.x = 5.f;
             for (int i = 0; i < sunLightsNumber; i++) {
-                ImGui::Text("SunLight %i color %f %f %f", i, sunLights[i].color.x, sunLights[i].color.y, sunLights[i].color.z);
-                ImGui::Text("SunLight %i rotation %f %f %f", i, sunLights[i].rot.x, sunLights[i].rot.y, sunLights[i].rot.z);
                 sunLights[i].draw(shaders[0], i);
             }
             for (int i = 0; i < pointLightsNumber; i++) {
-                ImGui::Text("PointLight %i color %f %f %f", i, pointLights[i].color.x, pointLights[i].color.y, pointLights[i].color.z);
-                ImGui::Text("PointLight %i rotation %f %f %f", i, pointLights[i].pos.x, pointLights[i].pos.y, pointLights[i].pos.z);
                 pointLights[i].draw(shaders[0], i);
             }
             
@@ -267,18 +262,18 @@ public:
             //}
 
             //Map
-            /*
-            shaders[2].use();
-            shaders[2].setMat4("view", view);
-            shaders[2].setMat4("projection", projection);
+            
+            shaders[1].use();
+            shaders[1].setMat4("view", view);
+            shaders[1].setMat4("projection", projection);
             for (int i = 0; i < sunLightsNumber; i++) {
-                sunLights[i].draw(shaders[2], i);
+                sunLights[i].draw(shaders[1], i);
             }
             for (int i = 0; i < pointLightsNumber; i++) {
-                pointLights[i].draw(shaders[2], i);
+                pointLights[i].draw(shaders[1], i);
             }
-            map[0].draw(shaders[2]);
-            */
+            map[0].draw(shaders[1]);
+            
             //gui
             gui.render();
 
