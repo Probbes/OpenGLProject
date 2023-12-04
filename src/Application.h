@@ -25,8 +25,8 @@ Camera camera(glm::vec3(-1.0f, 1.0f, -0.0f));
 Player player(camera);
 bool cameraSwitch = true; // true = free cam mvmt; false = player camera mvmt
 bool mouseSwitch = true; // true = Mouse moves camera; false = mouse cursor
-const unsigned int SCR_WIDTH = 1280;
-const unsigned int SCR_HEIGHT = 720;
+const unsigned int SCR_WIDTH = 1500;
+const unsigned int SCR_HEIGHT = 900;
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -67,6 +67,12 @@ void processInput(GLFWwindow* window) { // ZQSD
     }
 
     else if (cameraSwitch) {
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+            camera.MovementSpeed = SPEED + 10;
+        }
+        else {
+            camera.MovementSpeed = SPEED;
+        };
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
             camera.ProcessKeyboardFree(FORWARD, deltaTime);
         };
@@ -102,10 +108,12 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
     lastX = xpos;
     lastY = ypos;
 
-    if (!cameraSwitch)
-        camera.ProcessMouseMovement(xoffset, yoffset);
-    else if (cameraSwitch)
-        camera.ProcessMouseMovementFree(xoffset, yoffset);
+    if (mouseSwitch) {
+        if (!cameraSwitch)
+            camera.ProcessMouseMovement(xoffset, yoffset);
+        else if (cameraSwitch)
+            camera.ProcessMouseMovementFree(xoffset, yoffset);
+    }
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
@@ -163,7 +171,8 @@ public:
 
 	void init() {
         shaders.push_back(Shader("Shader/lightshader.vs", "Shader/lightShader.fs"));
-        shaders.push_back(Shader("Shader/mapShader.vs", "Shader/mapShader.fs"));
+        shaders.push_back(Shader("Shader/planetShader.vs", "Shader/planetShader.fs"));
+        shaders.push_back(Shader("Shader/planetWaterShader.vs", "Shader/planetWaterShader.fs"));
 
         //Initialize some parameters
         glEnable(GL_DEPTH_TEST);
@@ -173,6 +182,8 @@ public:
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        glEnable(GL_CULL_FACE);
 	}
 
     void initObj() {
@@ -210,6 +221,7 @@ public:
 
             // Start the Dear ImGui frame
             gui.loopInit();
+           // ImGui::ShowDemoWindow();
             ImGui::Text("Camera Position %f %f %f", camera.Position.x, camera.Position.y, camera.Position.z);
             ImGui::Text("Camera Yaw %f", camera.Yaw);
             ImGui::Text("--------------------------------");
@@ -225,7 +237,7 @@ public:
 
             //Free cam or player cam
             if (cameraSwitch == false) {
-                camera.Update(deltaTime, player.Position);
+                    camera.Update(deltaTime, player.Position);
             }
 
             //Free cursor or mouse moves cam
@@ -266,13 +278,18 @@ public:
             shaders[1].use();
             shaders[1].setMat4("view", view);
             shaders[1].setMat4("projection", projection);
+            shaders[2].use();
+            shaders[2].setMat4("view", view);
+            shaders[2].setMat4("projection", projection);
+            /*
             for (int i = 0; i < sunLightsNumber; i++) {
                 sunLights[i].draw(shaders[1], i);
             }
             for (int i = 0; i < pointLightsNumber; i++) {
                 pointLights[i].draw(shaders[1], i);
             }
-            map[0].draw(shaders[1]);
+            */
+            map[0].draw(shaders[1], shaders[2]);
             
             //gui
             gui.render();

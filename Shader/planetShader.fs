@@ -68,10 +68,12 @@ void main()
     vec4 texColor = texture(texture_diffuse1, TexCoords);
     if(texColor.a < 0.1) discard;
 
-    //if (FragPos.y > 10.0) { FragColor = vec4(1.0, 1.0, 1.0, 1.0); }
-    //else if (FragPos.y < 0.0) { FragColor = vec4(0.2, 0.2, 0.2, 1.0);}
-    //else {FragColor = vec4(0.0, 0.8, 0.0, 1.0);}
+        // Calculate spherical coordinates
+    float radius = length(FragPos);
 
+    if (radius > 205) {FragColor = vec4(1.0, 1.0, 1.0, 1.0);}
+    else if (radius > 195) {FragColor = vec4(0.0, 0.8, 0.0, 1.0);}
+    else {FragColor = vec4(0.2, 0.2, 0.2, 1.0);}
     //FragColor = vec4(abs(Normal), 1.0);
     //FragColor = vec4(FragPos, 1.0);
     //FragColor = vec4()

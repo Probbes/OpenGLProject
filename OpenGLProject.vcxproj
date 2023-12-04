@@ -160,6 +160,10 @@
     <None Include="Shader\lightShader.vs" />
     <None Include="Shader\mapShader.fs" />
     <None Include="Shader\mapShader.vs" />
+    <None Include="Shader\planetShader.fs" />
+    <None Include="Shader\planetShader.vs" />
+    <None Include="Shader\planetWaterShader.fs" />
+    <None Include="Shader\planetWaterShader.vs" />
     <None Include="Shader\shader.fs" />
     <None Include="Shader\shader.vs" />
   </ItemGroup>
