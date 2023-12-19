@@ -138,11 +138,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\Cubesphere.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\CameraClass.h" />
     <ClInclude Include="src\Collision.h" />
+    <ClInclude Include="src\Cubesphere.h" />
     <ClInclude Include="src\Gui.h" />
     <ClInclude Include="src\Inputs.h" />
     <ClInclude Include="src\Lights.h" />

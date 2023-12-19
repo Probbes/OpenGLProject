@@ -68,9 +68,15 @@ void main()
     vec4 texColor = texture(texture_diffuse1, TexCoords);
     if(texColor.a < 0.1) discard;
 
-    //if (FragPos.y > 10.0) { FragColor = vec4(1.0, 1.0, 1.0, 1.0); }
-    //else if (FragPos.y < 0.0) { FragColor = vec4(0.2, 0.2, 0.2, 1.0);}
-    //else {FragColor = vec4(0.0, 0.8, 0.0, 1.0);}
+    if (mod(abs(FragPos.x), 50)  < 1 || mod(abs(FragPos.z), 50) < 1){
+         FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    }
+    else {
+        if (FragPos.y > 80.0) { FragColor = vec4(1.0, 1.0, 1.0, 1.0); }
+        else if (FragPos.y < 0.0) { FragColor = vec4(0.2, 0.2, 0.2, 1.0);}
+        else {FragColor = vec4(0.0, 0.8, 0.0, 1.0);}
+    }
+
 
     //FragColor = vec4(abs(Normal), 1.0);
     //FragColor = vec4(FragPos, 1.0);

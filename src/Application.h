@@ -136,7 +136,7 @@ public:
     GLFWwindow* window;
     GUI gui;
 
-    Application(){
+    Application() {
         window = createWindow();
         gui.init(window);
     }
@@ -156,6 +156,7 @@ public:
             glfwTerminate();
         }
         glfwMakeContextCurrent(window);
+        glfwSwapInterval(0);    //disable vsync
         glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
         glfwSetCursorPosCallback(window, mouse_callback);
         glfwSetScrollCallback(window, scroll_callback);
@@ -171,7 +172,7 @@ public:
 
 	void init() {
         shaders.push_back(Shader("Shader/lightshader.vs", "Shader/lightShader.fs"));
-        shaders.push_back(Shader("Shader/planetShader.vs", "Shader/planetShader.fs"));
+        shaders.push_back(Shader("Shader/mapShader.vs", "Shader/mapShader.fs"));
         shaders.push_back(Shader("Shader/planetWaterShader.vs", "Shader/planetWaterShader.fs"));
 
         //Initialize some parameters
@@ -183,7 +184,9 @@ public:
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        glEnable(GL_CULL_FACE);
+        //glEnable(GL_CULL_FACE);
+
+        std::cout << glGetString(GL_VERSION);
 	}
 
     void initObj() {
@@ -200,7 +203,6 @@ public:
         pointLights.push_back(PointLight(camera, glm::vec3(1.f, 1.f, 1.f), glm::vec3(0.f, 0.f, 1.f)));
         pointLightsNumber = (int)pointLights.size();
         shaders[0].setInt("numberOfPointLight",pointLightsNumber);
-
         //shaders[1].use();
         map.push_back(Map(camera));
         //shaders[1].setInt("numberOfSun", sunLightsNumber);
@@ -211,7 +213,7 @@ public:
         // render loop
         while (!glfwWindowShouldClose(window))
         {
-            sleep(0.001);    //block framerate max
+            //sleep(0.001);    //block framerate max
             // per-frame time logic
             float currentFrame = static_cast<float>(glfwGetTime());
             deltaTime = currentFrame - lastFrame;
@@ -222,6 +224,8 @@ public:
             // Start the Dear ImGui frame
             gui.loopInit();
            // ImGui::ShowDemoWindow();
+            ImGui::Text("FPS %f", deltaTime);
+            ImGui::Text("--------------------------------");
             ImGui::Text("Camera Position %f %f %f", camera.Position.x, camera.Position.y, camera.Position.z);
             ImGui::Text("Camera Yaw %f", camera.Yaw);
             ImGui::Text("--------------------------------");
@@ -248,7 +252,7 @@ public:
 
             //Camere & Shader WIP
             view = camera.GetViewMatrix();
-            projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f);
+            projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 5000.0f);
 
             shaders[0].use();
             shaders[0].setMat4("view", view);

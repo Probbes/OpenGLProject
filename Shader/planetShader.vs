@@ -3,7 +3,7 @@ layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec2 aTexCoords;
 layout (location = 3) in float noise[64*64];
-in int gl_VertexID;
+in int VertexID;
 
 out vec2 TexCoords;
 out vec4 vertexColor;
