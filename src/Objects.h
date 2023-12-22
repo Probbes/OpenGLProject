@@ -24,9 +24,14 @@ public:
     bool ground = true;
     float playerYaw=0.f;
     float speed = 0.3f;
+    std::vector<Model> models;
 
-    Player(Camera camera) {
-        this->camera = camera;
+    Player(Camera icamera) : camera(icamera) {
+        //this->camera = camera;
+    }
+
+    void loadModel() {
+        models.push_back(Model("../assets/models/Robot/LilRobot.obj", glm::vec3(1.f, 1.f, 1.f), 0.f, glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f, 1.f, 1.f)));
     }
 
     void ProcessKeyboardPlayer(Camera_Movement direction, float deltaTime)
@@ -53,61 +58,12 @@ public:
        
     }
 
-    /*
-    void Jump()
-    {
-        if (!isJumping) {
-            jumpVelocity = 8.0f; // Adjust this value as needed
-            isJumping = true;
-        }
-    }
-
-    // Update function (called in the game loop)
-    void Update(float deltaTime)
-    {
-        // Apply gravity to the jump velocity
-        walkOnGround();
-        jumpVelocity -= gravity * deltaTime;
-
-        // Check if the player has landed on the ground
-        if (isJumping == true) {
-            Position.y += jumpVelocity * deltaTime;
-            if (Position.y <= groundLevel) {
-                Position.y = groundLevel; // Snap the player to the ground level
-                jumpVelocity = 0.0f; // Reset jump velocity
-                isJumping = false; // Set jumping state to false
-            }
-        }
-
-        if (ground == false) {
-            fall();
-        }
-        if (Position.y < -100.0f) {
-            Position = glm::vec3(0.0f, groundLevel, 0.0f);
-        }
-    }
-
-    void walkOnGround() {
-        if (Position.x > -150.5f && Position.x < 250.5f && Position.z > -150.5f && Position.z < 250.5f && Position.y > -4.6f) {
-            ground = true;
-            fallVelocity = 0.0f;
-        }
-        else {
-            ground = false;
-        }
-    }
-
-    void fall() {
-        fallVelocity -= gravity * deltaTime;
-        Position.y += fallVelocity * deltaTime;
-    }
-    */
-    void draw(Shader& shader, Model model, glm::vec3 scale) {
+    void draw(Shader& shader, glm::vec3 scale) {
         //model.draw(shader, glm::vec3(Position.x, Position.y, Position.z), -playerYaw - 90.f, glm::vec3(0.0f, 1.0f, 0.0f), scale);
-        model.scale = scale;
-        model.pos = glm::vec3(Position.x, Position.y, Position.z);
-        model.rotation = -playerYaw - 90.f;
-        model.draw(shader);
+        models[0].scale = scale;
+        models[0].pos = glm::vec3(Position.x, Position.y, Position.z);
+        models[0].rotation = -playerYaw - 90.f;
+        models[0].draw(shader);
     }
 private:
     Camera camera;

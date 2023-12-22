@@ -37,7 +37,7 @@ private:
 	std::vector<float> vertices;
 	std::vector<int> indices;
 	float size;
-	int subdivisions = 2;
+	int subdivisions = 1000;
 	int startx, starty;
 	int subLevel = 2; //0 = high, 1 = mid, 2 = low
 
@@ -225,7 +225,7 @@ public:
 		checkPos();
 		//setMaterial(shader);
 		drawChunks(pshader, wshader);
-		drawWater(wshader);
+		//drawWater(wshader);
 	}
 
 private:
@@ -233,12 +233,12 @@ private:
 	Terrain terrain{};
 	int renderedX = 0;
 	int renderedZ = 0;
-	int chunkWidth = 50;
+	int chunkWidth = 2000;
 	std::vector<Chunk> chunks;
 	unsigned int wVBO, wVAO, wEBO;
 	std::vector<float> wvertices;
 	std::vector<int> windices;
-	int chunkNumber = 50;
+	int chunkNumber = 1;
 	int currentChunk = 21;
 
 	std::vector<int> highChunksId;

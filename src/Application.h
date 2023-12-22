@@ -7,7 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <windows.h>
-#define sleep(x) Sleep(1000 * (x))
+//#define sleep(x) Sleep(1000 * (x))
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -22,7 +22,7 @@
 #include "Map.h"
 
 Camera camera(glm::vec3(-1.0f, 1.0f, -0.0f));
-Player player(camera);
+Player player{camera};
 bool cameraSwitch = true; // true = free cam mvmt; false = player camera mvmt
 bool mouseSwitch = true; // true = Mouse moves camera; false = mouse cursor
 const unsigned int SCR_WIDTH = 1500;
@@ -49,7 +49,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         mouseSwitch = !mouseSwitch;
 }
 
-void processInput(GLFWwindow* window) { // ZQSD
+void processInput(GLFWwindow* window, Player& player) { // ZQSD
 
     if (!cameraSwitch) {
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
@@ -191,7 +191,6 @@ public:
 
     void initObj() {
         shaders[0].use();
-        models.push_back(Model("../assets/models/Robot/LilRobot.obj", glm::vec3(1.f, 1.f, 1.f), 0.f, glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f, 1.f, 1.f)));
         models.push_back(Model("../assets/models/Box/Box.obj", glm::vec3(1.f, 1.f, 1.f), 0.f, glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f, 1.f, 1.f)));
         
         sunLights.push_back(SunLight(camera, glm::vec3(1.f, 1.f, 1.f), glm::vec3(0.2f, 0.9f, 0.f)));
@@ -207,6 +206,8 @@ public:
         map.push_back(Map(camera));
         //shaders[1].setInt("numberOfSun", sunLightsNumber);
         //shaders[1].setInt("numberOfPointLight", pointLightsNumber);
+
+        player.loadModel();
     }
 
     void loop() {
@@ -219,12 +220,15 @@ public:
             deltaTime = currentFrame - lastFrame;
             lastFrame = currentFrame;
 
+            // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+            glfwSwapBuffers(window);
+
             glfwPollEvents();
 
             // Start the Dear ImGui frame
             gui.loopInit();
            // ImGui::ShowDemoWindow();
-            ImGui::Text("FPS %f", deltaTime);
+            ImGui::Text("FPS %f", 1/deltaTime);
             ImGui::Text("--------------------------------");
             ImGui::Text("Camera Position %f %f %f", camera.Position.x, camera.Position.y, camera.Position.z);
             ImGui::Text("Camera Yaw %f", camera.Yaw);
@@ -232,7 +236,7 @@ public:
             ImGui::Text("Player Position %f %f %f", player.Position.x, player.Position.y, player.Position.z);
 
             // input
-            processInput(window);
+            processInput(window, player);
             glfwSetKeyCallback(window, key_callback);
 
             // render
@@ -270,7 +274,7 @@ public:
             }
             
             //Player
-            player.draw(shaders[0], models[0], glm::vec3(0.05f, 0.05f, 0.05f));
+            player.draw(shaders[0], glm::vec3(0.05f, 0.05f, 0.05f));
 
             //Objects
             //for (int i = 1; i < models.size(); i++) {
@@ -297,9 +301,6 @@ public:
             
             //gui
             gui.render();
-
-            // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-            glfwSwapBuffers(window);
         }
     }
 
