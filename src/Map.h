@@ -7,6 +7,7 @@
 #include <FastNoise/FastNoise.h>
 
 #include "ShaderClass.h"
+#include "quadtree/Quadtree.h"
 
 class Chunk {
 public:
@@ -66,14 +67,42 @@ private:
 		float step = 1.0f / subdivisions * size;
 		float x, z;
 		int noiseIndex = 0;
-		// Generate vertices
+
+		float posX, posY, posZ;
+
+		glm::vec3 U = glm::vec3 (0.0f, 0.0f, 0.0f);
+		glm::vec3 V = glm::vec3(0.0f, 0.0f, 0.0f);
+		glm::vec3 Normal = glm::vec3(0.0f, 0.0f, 0.0f);
+
+		// Generate vertices position
 		for (int i = 0; i <= subdivisions; ++i) {
 			for (int j = 0; j <= subdivisions; ++j) {
 				x = j * step;
 				z = i * step;
-				vertices.push_back(x + startx);
-				vertices.push_back(0.0f + noiseOutput[noiseIndex++] * 300.f);
-				vertices.push_back(z + starty);
+
+				posX = x + startx;
+				posY = noiseOutput[noiseIndex] * 300.f;
+				posZ = z + starty;
+				//Position
+				vertices.push_back(posX);
+				vertices.push_back(posY);
+				vertices.push_back(posZ);
+
+				if (j == subdivisions) { U = glm::vec3((j - 1) * step + startx, noiseOutput[noiseIndex - 1] * 300.f, posZ) - glm::vec3(posX, posY, posZ); }
+				if (i == subdivisions) { V = glm::vec3(posX, noiseOutput[noiseIndex - subdivisions] * 300.f, (i - 1) * step + starty) - glm::vec3(posX, posY, posZ); }
+				else{
+					U = glm::vec3((j + 1) * step + startx, noiseOutput[noiseIndex + 1] * 300.f, posZ) - glm::vec3(posX, posY, posZ);
+					V = glm::vec3(posX, noiseOutput[noiseIndex + subdivisions] * 300.f, (i + 1) * step + starty) - glm::vec3(posX, posY, posZ);
+				}
+
+				Normal = glm::cross(U, V);
+				//std::cout << U.x << " - " << U.y << " - " << U.z << std::endl;
+				Normal = glm::normalize(Normal);
+				vertices.push_back(Normal.x);
+				vertices.push_back(Normal.y);
+				vertices.push_back(Normal.z);
+
+				noiseIndex++;
 			}
 		}
 
@@ -106,8 +135,11 @@ private:
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(float), &indices[0], GL_STATIC_DRAW);
 
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
+		glEnableVertexAttribArray(1);
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
@@ -220,12 +252,13 @@ private:
 class Map {
 public:
 
-	Map(Camera& icamera) : camera(icamera) { buildChunks(); buildWater(); bufferWater(); }
+	Map(Camera& icamera) : camera(icamera) { 
+		buildChunks(); buildWater(); bufferWater();
+	}
 	void draw(Shader& pshader, Shader& wshader) {
-		checkPos();
-		//setMaterial(shader);
+		setMaterial(pshader);
 		drawChunks(pshader, wshader);
-		//drawWater(wshader);
+		drawWater(wshader);
 	}
 
 private:
@@ -233,7 +266,7 @@ private:
 	Terrain terrain{};
 	int renderedX = 0;
 	int renderedZ = 0;
-	int chunkWidth = 2000;
+	int chunkWidth = 1000;
 	std::vector<Chunk> chunks;
 	unsigned int wVBO, wVAO, wEBO;
 	std::vector<float> wvertices;
@@ -245,21 +278,10 @@ private:
 	std::vector<int> midChunksId;
 	std::vector<int> lowChunksId;
 
-	//Make a ring around the currentchunk instead of a plus sign. idem for the unsubdivisions (ring + 1)
-	void checkPos() {
-
-		int x = (int)(camera.Position.x + (chunkNumber * chunkWidth)) / 50;
-		int z = (int)(camera.Position.z + (chunkNumber * chunkWidth)) / 50;
-		int nb = (z * chunkNumber * 2) + x;
-		if (currentChunk != nb) {
-
-			currentChunk = nb;
-			buildCircles(nb);
-		}
-	}
 
 	void setMaterial(Shader& shader) {
-		shader.setVec3("material.ambient", glm::vec3(0.9f, 0.9f, 0.9f));
+		shader.use();
+		shader.setVec3("material.ambient", glm::vec3(0.1f, 0.8f, 0.1f));
 		shader.setVec3("material.diffuse", glm::vec3(0.9f, 0.9f, 0.9f));
 		shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
 		shader.setFloat("material.shininess", 0.8f);
@@ -277,62 +299,6 @@ private:
 				chunks.push_back(Chunk(x * chunkWidth, y * chunkWidth, chunkWidth));
 			}
 		}
-	}
-
-	// To rework : 
-	void buildCircles(int nb) {
-		int lenght = 3;
-		highChunksId.clear();
-		midChunksId.clear();
-		lowChunksId.clear();
-
-		//for (int i = -lenght; i <= lenght; i++) {
-		//	if (abs(i) == 1 || i== 0) {
-		//		highChunksId.push_back(nb + i);
-		//		highChunksId.push_back(nb + ((chunkNumber * 2) * 1) + i);
-		//		highChunksId.push_back(nb - ((chunkNumber * 2) * 1) + i);
-		//	}
-		//	if (abs(i) == 2) {
-		//		midChunksId.push_back(nb + i);
-		//		midChunksId.push_back(nb + ((chunkNumber * 2) * 2) + i);
-		//		midChunksId.push_back(nb - ((chunkNumber * 2) * 2) + i);
-		//	}
-		//	if (abs(i) == 3) {
-		//		/*lowChunksId.push_back(nb + i);*/
-		//	}
-		//}
-
-		////First circle
-		//for (int i = 0; i < highChunksId.size(); i++) {
-		//	if (chunks[highChunksId[i]].getSubLevel() != 0) {
-		//		chunks[highChunksId[i]].setSubLevel(0);
-		//		chunks[highChunksId[i]].rebuildChunk();
-		//	}
-		//}
-
-		////Second circle
-		//for (int i = 0; i < midChunksId.size(); i++) {
-		//	if (chunks[midChunksId[i]].getSubLevel() != 1) {
-		//		chunks[midChunksId[i]].setSubLevel(1);
-		//		chunks[midChunksId[i]].rebuildChunk();
-		//	}
-		//}
-
-		////Third circle
-		//for (int i = 0; i < lowChunksId.size(); i++) {
-		//	if (chunks[lowChunksId[i]].getSubLevel() != 2) {
-		//		chunks[lowChunksId[i]].setSubLevel(2);
-		//		chunks[lowChunksId[i]].rebuildChunk();
-		//	}
-		//}
-	}
-
-	void buildSecondCircle(int nb) {
-
-	}
-
-	void buildThirdCircle(int nb) {
-
 	}
 
 	void drawChunks(Shader& pshader, Shader& wshader) {

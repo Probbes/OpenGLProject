@@ -41,7 +41,7 @@ uniform sampler2D texture_specular1;
 uniform vec3 lightPower;
 //uniform vec3 lightDirection = vec3(0.0);
 
-uniform int matOrText;
+uniform int matOrText = 1;
 
 uniform Material material;
 uniform PointLight light[10];
@@ -68,19 +68,10 @@ void main()
     vec4 texColor = texture(texture_diffuse1, TexCoords);
     if(texColor.a < 0.1) discard;
 
-    if (mod(abs(FragPos.x), 50)  < 1 || mod(abs(FragPos.z), 50) < 1){
-         FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-    }
-    else {
-        if (FragPos.y > 80.0) { FragColor = vec4(1.0, 1.0, 1.0, 1.0); }
-        else if (FragPos.y < 0.0) { FragColor = vec4(0.2, 0.2, 0.2, 1.0);}
-        else {FragColor = vec4(0.0, 0.8, 0.0, 1.0);}
-    }
-
-
-    //FragColor = vec4(abs(Normal), 1.0);
+    //FragColor = vec4(result, 1.0);
+    //FragColor = vec4(0.0, 0.0, Normal.y, 1.0);
     //FragColor = vec4(FragPos, 1.0);
-    //FragColor = vec4()
+    FragColor = vec4(Normal, 1.0);
 
 }
 
@@ -132,7 +123,7 @@ vec3 CalcDirLight(DirLight light)
     vec3 specular = vec3(0);
     float spec = 0.0;
 
-     vec3 lightDir = normalize(light.direction);
+    vec3 lightDir = normalize(light.direction);
 
     vec3 norm = normalize(Normal);
     float diff = max(dot(norm, lightDir), 0.0);
@@ -153,5 +144,6 @@ vec3 CalcDirLight(DirLight light)
         specular = vec3(1.0) * lightPower * light.specular * spec * vec3(texture(texture_specular1, TexCoords));
     }
 
-    return (ambient + diffuse + specular);
+    //return (ambient + diffuse + specular);
+    return vec3(diff,diff,diff);
 }  

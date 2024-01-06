@@ -193,13 +193,13 @@ public:
         shaders[0].use();
         models.push_back(Model("../assets/models/Box/Box.obj", glm::vec3(1.f, 1.f, 1.f), 0.f, glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f, 1.f, 1.f)));
         
-        sunLights.push_back(SunLight(camera, glm::vec3(1.f, 1.f, 1.f), glm::vec3(0.2f, 0.9f, 0.f)));
-        //sunLights.push_back(SunLight(camera, glm::vec3(0.5f, 0.f, 0.5f), glm::vec3(0.f, 0.f, 1.f)));
+        sunLights.push_back(SunLight(camera, glm::vec3(1.f, 1.f, 1.f), glm::vec3(0.8f, -0.9f, 0.1f)));
         sunLightsNumber = (int)sunLights.size();
         shaders[0].setInt("numberOfSun", sunLightsNumber);
+        shaders[1].use();
+        shaders[1].setInt("numberOfSun", sunLightsNumber);
 
-        pointLights.push_back(PointLight(camera, glm::vec3(1.f, 1.f, 1.f), glm::vec3(1.f, 0.f, 0.f)));
-        pointLights.push_back(PointLight(camera, glm::vec3(1.f, 1.f, 1.f), glm::vec3(0.f, 0.f, 1.f)));
+        //pointLights.push_back(PointLight(camera, glm::vec3(1.f, 1.f, 1.f), glm::vec3(1.f, 0.f, 0.f)));
         pointLightsNumber = (int)pointLights.size();
         shaders[0].setInt("numberOfPointLight",pointLightsNumber);
         //shaders[1].use();
@@ -222,7 +222,6 @@ public:
 
             // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
             glfwSwapBuffers(window);
-
             glfwPollEvents();
 
             // Start the Dear ImGui frame
@@ -261,16 +260,16 @@ public:
             shaders[0].use();
             shaders[0].setMat4("view", view);
             shaders[0].setMat4("projection", projection);
-            
+            shaders[1].use();
+            shaders[1].setMat4("view", view);
+            shaders[1].setMat4("projection", projection);
+            shaders[2].use();
+            shaders[2].setMat4("view", view);
+            shaders[2].setMat4("projection", projection);
+
             //Lights
-            ImGui::Text("--------------------------------");
-            pointLights[0].pos.z = abs(sin(glfwGetTime())) * 10.f;
-            pointLights[0].pos.x = 5.f;
             for (int i = 0; i < sunLightsNumber; i++) {
                 sunLights[i].draw(shaders[0], i);
-            }
-            for (int i = 0; i < pointLightsNumber; i++) {
-                pointLights[i].draw(shaders[0], i);
             }
             
             //Player
@@ -280,23 +279,11 @@ public:
             //for (int i = 1; i < models.size(); i++) {
             //    models[i].draw(shaders[0]);
             //}
-
-            //Map
             
-            shaders[1].use();
-            shaders[1].setMat4("view", view);
-            shaders[1].setMat4("projection", projection);
-            shaders[2].use();
-            shaders[2].setMat4("view", view);
-            shaders[2].setMat4("projection", projection);
-            /*
             for (int i = 0; i < sunLightsNumber; i++) {
                 sunLights[i].draw(shaders[1], i);
             }
-            for (int i = 0; i < pointLightsNumber; i++) {
-                pointLights[i].draw(shaders[1], i);
-            }
-            */
+            
             map[0].draw(shaders[1], shaders[2]);
             
             //gui

@@ -53,6 +53,7 @@ public:
 	SunLight(Camera icamera, glm::vec3 icolor, glm::vec3 irot) :camera(icamera), color(icolor), rot(irot) {}
 
 	void draw(Shader& shader, unsigned int i) {
+		shader.use();
 		shader.setVec3("dirLight[" + std::to_string(i) + "].ambient", color);
 		shader.setVec3("dirLight[" + std::to_string(i) + "].diffuse", color);
 		shader.setVec3("dirLight[" + std::to_string(i) + "].specular", 1.0f, 1.0f, 1.0f);
