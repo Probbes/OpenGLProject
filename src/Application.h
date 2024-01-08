@@ -7,7 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <windows.h>
-//#define sleep(x) Sleep(1000 * (x))
+#define sleep(x) Sleep(1000 * (x))
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -185,15 +185,13 @@ public:
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         //glEnable(GL_CULL_FACE);
-
-        std::cout << glGetString(GL_VERSION);
 	}
 
     void initObj() {
         shaders[0].use();
         models.push_back(Model("../assets/models/Box/Box.obj", glm::vec3(1.f, 1.f, 1.f), 0.f, glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f, 1.f, 1.f)));
         
-        sunLights.push_back(SunLight(camera, glm::vec3(1.f, 1.f, 1.f), glm::vec3(0.8f, -0.9f, 0.1f)));
+        sunLights.push_back(SunLight(camera, glm::vec3(1.f, 1.f, 1.f), glm::vec3(1.0f, 0.0f, 0.0f)));
         sunLightsNumber = (int)sunLights.size();
         shaders[0].setInt("numberOfSun", sunLightsNumber);
         shaders[1].use();
@@ -214,7 +212,7 @@ public:
         // render loop
         while (!glfwWindowShouldClose(window))
         {
-            //sleep(0.001);    //block framerate max
+            sleep(0.001);    //block framerate max
             // per-frame time logic
             float currentFrame = static_cast<float>(glfwGetTime());
             deltaTime = currentFrame - lastFrame;
@@ -267,6 +265,7 @@ public:
             shaders[2].setMat4("view", view);
             shaders[2].setMat4("projection", projection);
 
+            sunLights[0].rot = glm::vec3(sin(glfwGetTime()), 1.f, 0.f);
             //Lights
             for (int i = 0; i < sunLightsNumber; i++) {
                 sunLights[i].draw(shaders[0], i);

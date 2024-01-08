@@ -68,10 +68,11 @@ void main()
     vec4 texColor = texture(texture_diffuse1, TexCoords);
     if(texColor.a < 0.1) discard;
 
-    //FragColor = vec4(result, 1.0);
+    FragColor = vec4(result, 1.0);
     //FragColor = vec4(0.0, 0.0, Normal.y, 1.0);
     //FragColor = vec4(FragPos, 1.0);
-    FragColor = vec4(Normal, 1.0);
+    //FragColor = vec4(Normal, 1.0);
+    //FragColor = vec4(material.ambient, 1.0, 1.0, 1.0);
 
 }
 
@@ -144,6 +145,5 @@ vec3 CalcDirLight(DirLight light)
         specular = vec3(1.0) * lightPower * light.specular * spec * vec3(texture(texture_specular1, TexCoords));
     }
 
-    //return (ambient + diffuse + specular);
-    return vec3(diff,diff,diff);
+    return (ambient + diffuse + specular);
 }  

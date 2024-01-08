@@ -38,7 +38,7 @@ private:
 	std::vector<float> vertices;
 	std::vector<int> indices;
 	float size;
-	int subdivisions = 1000;
+	int subdivisions = 700;
 	int startx, starty;
 	int subLevel = 2; //0 = high, 1 = mid, 2 = low
 
@@ -50,7 +50,7 @@ private:
 		//model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
 		shader.setMat4("model", model);
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLE_STRIP, indices.size(), GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 	}
 
@@ -88,16 +88,17 @@ private:
 				vertices.push_back(posY);
 				vertices.push_back(posZ);
 
-				if (j == subdivisions) { U = glm::vec3((j - 1) * step + startx, noiseOutput[noiseIndex - 1] * 300.f, posZ) - glm::vec3(posX, posY, posZ); }
-				if (i == subdivisions) { V = glm::vec3(posX, noiseOutput[noiseIndex - subdivisions] * 300.f, (i - 1) * step + starty) - glm::vec3(posX, posY, posZ); }
+				if (j == subdivisions) { U = glm::vec3(step, noiseOutput[noiseIndex - 1] * 300.f, 0) - glm::vec3(0, posY, 0); }
+				if (i == subdivisions) { V = glm::vec3(0, noiseOutput[noiseIndex - subdivisions] * 300.f, step) - glm::vec3(0, posY, 0); }
 				else{
-					U = glm::vec3((j + 1) * step + startx, noiseOutput[noiseIndex + 1] * 300.f, posZ) - glm::vec3(posX, posY, posZ);
-					V = glm::vec3(posX, noiseOutput[noiseIndex + subdivisions] * 300.f, (i + 1) * step + starty) - glm::vec3(posX, posY, posZ);
+					U = glm::vec3(step, noiseOutput[noiseIndex + 1] * 300.f, 0) - glm::vec3(0, posY, 0);
+					V = glm::vec3(0, noiseOutput[noiseIndex + subdivisions] * 300.f, step) - glm::vec3(0, posY, 0);
 				}
 
 				Normal = glm::cross(U, V);
-				//std::cout << U.x << " - " << U.y << " - " << U.z << std::endl;
+				Normal.y = 1.f;
 				Normal = glm::normalize(Normal);
+				
 				vertices.push_back(Normal.x);
 				vertices.push_back(Normal.y);
 				vertices.push_back(Normal.z);
@@ -106,17 +107,21 @@ private:
 			}
 		}
 
-		// Generate indices
+		int index = 0;
+		//Generate indices
 		for (int i = 0; i < subdivisions; ++i) {
 			for (int j = 0; j < subdivisions; ++j) {
-				int index = i * (subdivisions + 1) + j;
-				indices.push_back(index);
-				indices.push_back(index + subdivisions + 2);
-				indices.push_back(index + 1);
+				if (j == subdivisions - 1) {
+					indices.push_back(j + ((subdivisions + 1) * i));
+					indices.push_back(j + ((subdivisions + 1) * (i + 1)));
 
-				indices.push_back(index);
-				indices.push_back(index + subdivisions + 1);
-				indices.push_back(index + subdivisions + 2);
+					indices.push_back(j + ((subdivisions + 1) * (i + 1)));
+					indices.push_back(0 + ((subdivisions + 1) * (i + 1)));
+				}
+				else {
+					indices.push_back(j + ((subdivisions + 1) * i));
+					indices.push_back(j + ((subdivisions + 1) * (i + 1)));
+				}
 			}
 		}
 	}
@@ -282,9 +287,9 @@ private:
 	void setMaterial(Shader& shader) {
 		shader.use();
 		shader.setVec3("material.ambient", glm::vec3(0.1f, 0.8f, 0.1f));
-		shader.setVec3("material.diffuse", glm::vec3(0.9f, 0.9f, 0.9f));
+		shader.setVec3("material.diffuse", glm::vec3(0.1f, 0.8f, 0.1f));
 		shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
-		shader.setFloat("material.shininess", 0.8f);
+		shader.setFloat("material.shininess", 0.2f);
 		shader.setInt("matOrText", 1);
 	}
 
