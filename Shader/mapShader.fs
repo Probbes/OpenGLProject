@@ -26,6 +26,7 @@ struct Material {
     vec3 specular;
     float shininess;
 }; 
+Material material;
 
 out vec4 FragColor;
 
@@ -43,7 +44,7 @@ uniform vec3 lightPower;
 
 uniform int matOrText = 1;
 
-uniform Material material;
+//uniform Material material;
 uniform PointLight light[10];
 uniform DirLight dirLight[4];
 
@@ -72,7 +73,7 @@ void main()
     //FragColor = vec4(0.0, 0.0, Normal.y, 1.0);
     //FragColor = vec4(FragPos, 1.0);
     //FragColor = vec4(Normal, 1.0);
-    //FragColor = vec4(material.ambient, 1.0, 1.0, 1.0);
+    //FragColor = vec4(dot(Normal, vec3(0.0, 1.0, 0.0)), 1.0, 1.0, 1.0);
 
 }
 
@@ -124,6 +125,35 @@ vec3 CalcDirLight(DirLight light)
     vec3 specular = vec3(0);
     float spec = 0.0;
 
+    if (FragPos.y > 6){
+        if (dot(Normal, vec3(0.0, 1.0, 0.0)) < 0.6){    //Rock
+            material.diffuse = vec3(0.8, 0.8, 0.8);
+            material.ambient = vec3(0.8, 0.8, 0.8);
+            material.shininess = 0.3;
+            material.specular = vec3(0.5f, 0.5f, 0.5f);
+        } 
+        else{                                           //Grass
+            material.diffuse = vec3(0.0, 0.8, 0.0);
+            material.ambient = vec3(0.0, 0.8, 0.0);
+            material.shininess = 0.9;
+            material.specular = vec3(0.2f, 0.2f, 0.2f);
+        }
+    }
+    else{
+         if (dot(Normal, vec3(0.0, 1.0, 0.0)) < 0.34){    //Rock
+            material.diffuse = vec3(0.8, 0.8, 0.8);
+            material.ambient = vec3(0.8, 0.8, 0.8);
+            material.shininess = 0.3;
+            material.specular = vec3(0.5f, 0.5f, 0.5f);
+        } 
+        else{                                           //Grass
+            material.diffuse = vec3(1.0, 1.0, 0.0);
+            material.ambient = vec3(1.0, 1.0, 0.0);
+            material.shininess = 0.4;
+            material.specular = vec3(0.5f, 0.5f, 0.5f);
+        }
+    }
+
     vec3 lightDir = normalize(light.direction);
 
     vec3 norm = normalize(Normal);
@@ -134,8 +164,8 @@ vec3 CalcDirLight(DirLight light)
     spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.f);
 
     if (matOrText == 1){    //If object has nos texture -> use material
-        ambient = vec3(0.1) * light.ambient * material.ambient;
-        diffuse = vec3(0.5) * lightPower * light.diffuse * (diff * material.diffuse);
+        ambient = vec3(0.2) * light.ambient * material.ambient;
+        diffuse = vec3(0.8) * lightPower * light.diffuse * (diff * material.diffuse);
         specular = vec3(1.0) * lightPower * light.specular * (spec * material.specular);
     }
 

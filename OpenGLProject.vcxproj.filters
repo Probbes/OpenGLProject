@@ -62,6 +62,9 @@
     <ClInclude Include="src\TexturesHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\SkyBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\shader.fs">
@@ -76,7 +79,9 @@
     <None Include="Shader\mapShader.vs" />
     <None Include="Shader\planetShader.fs" />
     <None Include="Shader\planetShader.vs" />
-    <None Include="Shader\planetWaterShader.fs" />
-    <None Include="Shader\planetWaterShader.vs" />
+    <None Include="Shader\WaterShader.fs" />
+    <None Include="Shader\WaterShader.vs" />
+    <None Include="Shader\skyboxShader.vs" />
+    <None Include="Shader\skyboxShader.fs" />
   </ItemGroup>
 </Project>

@@ -12,7 +12,7 @@ uniform vec3 viewPos;
 void main()
 {
 
-    FragColor = vec4(0.0, 0.0, 0.8, 1.0);
+    FragColor = vec4(0.0, 0.4, 1.0, 0.9);
 
     //if (radius > 205) {FragColor = vec4(1.0, 1.0, 1.0, 1.0);}
     //else if (radius > 195) {FragColor = vec4(0.0, 0.8, 0.0, 1.0);}

@@ -54,7 +54,7 @@ public:
 
 	void draw(Shader& shader, unsigned int i) {
 		shader.use();
-		shader.setVec3("dirLight[" + std::to_string(i) + "].ambient", color);
+		shader.setVec3("dirLight[" + std::to_string(i) + "].ambient", glm::vec3(0.6f, 0.6f, 1.f));
 		shader.setVec3("dirLight[" + std::to_string(i) + "].diffuse", color);
 		shader.setVec3("dirLight[" + std::to_string(i) + "].specular", 1.0f, 1.0f, 1.0f);
 		shader.setVec3("dirLight[" + std::to_string(i) + "].direction", rot);

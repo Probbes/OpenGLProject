@@ -20,6 +20,7 @@
 #include "Lights.h"
 #include "Gui.h"
 #include "Map.h"
+#include "SkyBox.h"
 
 Camera camera(glm::vec3(-1.0f, 1.0f, -0.0f));
 Player player{camera};
@@ -136,44 +137,15 @@ public:
     GLFWwindow* window;
     GUI gui;
 
-    Application() {
-        window = createWindow();
+    Application(GLFWwindow* iwindow) : window(iwindow) {
         gui.init(window);
-    }
-
-    GLFWwindow* createWindow() {
-        // glfw: initialize and configure
-        glfwInit();
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-        // glfw window creation
-        GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
-        if (window == NULL)
-        {
-            std::cout << "Failed to create GLFW window" << std::endl;
-            glfwTerminate();
-        }
-        glfwMakeContextCurrent(window);
-        glfwSwapInterval(0);    //disable vsync
-        glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-        glfwSetCursorPosCallback(window, mouse_callback);
-        glfwSetScrollCallback(window, scroll_callback);
-
-        // glad: load all OpenGL function pointers
-        if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-        {
-            std::cout << "Failed to initialize GLAD" << std::endl;
-        }
-
-        return window;
     }
 
 	void init() {
         shaders.push_back(Shader("Shader/lightshader.vs", "Shader/lightShader.fs"));
         shaders.push_back(Shader("Shader/mapShader.vs", "Shader/mapShader.fs"));
-        shaders.push_back(Shader("Shader/planetWaterShader.vs", "Shader/planetWaterShader.fs"));
+        shaders.push_back(Shader("Shader/WaterShader.vs", "Shader/WaterShader.fs"));
+        shaders.push_back(Shader("Shader/skyboxShader.vs", "Shader/skyboxShader.fs"));
 
         //Initialize some parameters
         glEnable(GL_DEPTH_TEST);
@@ -184,14 +156,14 @@ public:
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        //glEnable(GL_CULL_FACE);
+        glEnable(GL_CULL_FACE);
 	}
 
     void initObj() {
         shaders[0].use();
         models.push_back(Model("../assets/models/Box/Box.obj", glm::vec3(1.f, 1.f, 1.f), 0.f, glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f, 1.f, 1.f)));
         
-        sunLights.push_back(SunLight(camera, glm::vec3(1.f, 1.f, 1.f), glm::vec3(1.0f, 0.0f, 0.0f)));
+        sunLights.push_back(SunLight(camera, glm::vec3(1.f, 1.f, 1.f), glm::vec3(1.0f, 0.5f, 0.5f)));
         sunLightsNumber = (int)sunLights.size();
         shaders[0].setInt("numberOfSun", sunLightsNumber);
         shaders[1].use();
@@ -202,6 +174,7 @@ public:
         shaders[0].setInt("numberOfPointLight",pointLightsNumber);
         //shaders[1].use();
         map.push_back(Map(camera));
+        skybox.push_back(Skybox());
         //shaders[1].setInt("numberOfSun", sunLightsNumber);
         //shaders[1].setInt("numberOfPointLight", pointLightsNumber);
 
@@ -264,8 +237,11 @@ public:
             shaders[2].use();
             shaders[2].setMat4("view", view);
             shaders[2].setMat4("projection", projection);
+            shaders[3].use();
+            shaders[3].setMat4("view", view);
+            shaders[3].setMat4("projection", projection);
 
-            sunLights[0].rot = glm::vec3(sin(glfwGetTime()), 1.f, 0.f);
+            //sunLights[0].rot = glm::vec3(sin(glfwGetTime()), 1.f, 0.f);
             //Lights
             for (int i = 0; i < sunLightsNumber; i++) {
                 sunLights[i].draw(shaders[0], i);
@@ -284,6 +260,8 @@ public:
             }
             
             map[0].draw(shaders[1], shaders[2]);
+
+            skybox[0].draw(shaders[3], view, projection, camera);
             
             //gui
             gui.render();
@@ -308,4 +286,5 @@ private:
 
     std::vector<MCube> cube;
     std::vector<Map> map;
+    std::vector<Skybox> skybox;
 };
