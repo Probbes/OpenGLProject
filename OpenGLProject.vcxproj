@@ -112,6 +112,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -142,33 +143,29 @@
   <ItemGroup>
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\CameraClass.h" />
-    <ClInclude Include="src\Collision.h" />
     <ClInclude Include="src\Gui.h" />
     <ClInclude Include="src\Inputs.h" />
     <ClInclude Include="src\Lights.h" />
     <ClInclude Include="src\Map.h" />
     <ClInclude Include="src\mesh.h" />
     <ClInclude Include="src\Model.h" />
-    <ClInclude Include="src\Objects.h" />
+    <ClInclude Include="src\Player.h" />
     <ClInclude Include="src\ShaderClass.h" />
     <ClInclude Include="src\SimpleGeometry.h" />
     <ClInclude Include="src\SkyBox.h" />
-    <ClInclude Include="src\Text.h" />
     <ClInclude Include="src\TexturesHeader.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shader\lightShader.fs" />
-    <None Include="Shader\lightShader.vs" />
-    <None Include="Shader\mapShader.fs" />
-    <None Include="Shader\mapShader.vs" />
-    <None Include="Shader\planetShader.fs" />
-    <None Include="Shader\planetShader.vs" />
-    <None Include="Shader\WaterShader.fs" />
-    <None Include="Shader\WaterShader.vs" />
+    <None Include="Shader\FS_lightShader.glsl" />
+    <None Include="Shader\VS_lightShader.glsl" />
+    <None Include="Shader\FS_mapShader.glsl" />
+    <None Include="Shader\VS_mapShader.glsl" />
+    <None Include="Shader\FS_WaterShader.glsl" />
+    <None Include="Shader\VS_WaterShader.glsl" />
     <None Include="Shader\shader.fs" />
     <None Include="Shader\shader.vs" />
-    <None Include="Shader\skyboxShader.fs" />
-    <None Include="Shader\skyboxShader.vs" />
+    <None Include="Shader\FS_skyboxShader.glsl" />
+    <None Include="Shader\VS_skyboxShader.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

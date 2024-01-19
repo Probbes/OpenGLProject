@@ -15,7 +15,6 @@
 #include "shaderClass.h"
 #include "CameraClass.h"
 #include "Model.h"
-#include "Objects.h"
 #include "SimpleGeometry.h"
 #include "Lights.h"
 #include "Gui.h"
@@ -23,7 +22,6 @@
 #include "SkyBox.h"
 
 Camera camera(glm::vec3(-1.0f, 1.0f, -0.0f));
-Player player{camera};
 bool cameraSwitch = true; // true = free cam mvmt; false = player camera mvmt
 bool mouseSwitch = true; // true = Mouse moves camera; false = mouse cursor
 const unsigned int SCR_WIDTH = 1500;
@@ -50,20 +48,20 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         mouseSwitch = !mouseSwitch;
 }
 
-void processInput(GLFWwindow* window, Player& player) { // ZQSD
+void processInput(GLFWwindow* window, Player& player, Map& map) { // ZQSD
 
     if (!cameraSwitch) {
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-            player.ProcessKeyboardPlayer(FORWARD, deltaTime);
+            player.ProcessKeyboardPlayer(FORWARD, deltaTime, map.checkPosMapHeight(player.Position.x, player.Position.z));
         };
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-            player.ProcessKeyboardPlayer(BACKWARD, deltaTime);
+            player.ProcessKeyboardPlayer(BACKWARD, deltaTime, map.checkPosMapHeight(player.Position.x, player.Position.z));
         };
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-            player.ProcessKeyboardPlayer(LEFT, deltaTime);
+            player.ProcessKeyboardPlayer(LEFT, deltaTime, map.checkPosMapHeight(player.Position.x, player.Position.z));
         };
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-            player.ProcessKeyboardPlayer(RIGHT, deltaTime);
+            player.ProcessKeyboardPlayer(RIGHT, deltaTime, map.checkPosMapHeight(player.Position.x, player.Position.z));
         };
     }
 
@@ -142,10 +140,10 @@ public:
     }
 
 	void init() {
-        shaders.push_back(Shader("Shader/lightshader.vs", "Shader/lightShader.fs"));
-        shaders.push_back(Shader("Shader/mapShader.vs", "Shader/mapShader.fs"));
-        shaders.push_back(Shader("Shader/WaterShader.vs", "Shader/WaterShader.fs"));
-        shaders.push_back(Shader("Shader/skyboxShader.vs", "Shader/skyboxShader.fs"));
+        shaders.push_back(Shader("Shader/VS_lightshader.glsl", "Shader/FS_lightShader.glsl"));
+        shaders.push_back(Shader("Shader/VS_mapShader.glsl", "Shader/FS_mapShader.glsl"));
+        shaders.push_back(Shader("Shader/VS_WaterShader.glsl", "Shader/FS_WaterShader.glsl"));
+        shaders.push_back(Shader("Shader/VS_skyboxShader.glsl", "Shader/FS_skyboxShader.glsl"));
 
         //Initialize some parameters
         glEnable(GL_DEPTH_TEST);
@@ -157,6 +155,8 @@ public:
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         glEnable(GL_CULL_FACE);
+
+        glEnable(GL_MULTISAMPLE);
 	}
 
     void initObj() {
@@ -173,12 +173,8 @@ public:
         pointLightsNumber = (int)pointLights.size();
         shaders[0].setInt("numberOfPointLight",pointLightsNumber);
         //shaders[1].use();
-        map.push_back(Map(camera));
-        skybox.push_back(Skybox());
         //shaders[1].setInt("numberOfSun", sunLightsNumber);
         //shaders[1].setInt("numberOfPointLight", pointLightsNumber);
-
-        player.loadModel();
     }
 
     void loop() {
@@ -202,11 +198,9 @@ public:
             ImGui::Text("--------------------------------");
             ImGui::Text("Camera Position %f %f %f", camera.Position.x, camera.Position.y, camera.Position.z);
             ImGui::Text("Camera Yaw %f", camera.Yaw);
-            ImGui::Text("--------------------------------");
-            ImGui::Text("Player Position %f %f %f", player.Position.x, player.Position.y, player.Position.z);
 
             // input
-            processInput(window, player);
+            processInput(window, map.player, map);
             glfwSetKeyCallback(window, key_callback);
 
             // render
@@ -215,9 +209,8 @@ public:
 
             //Free cam or player cam
             if (cameraSwitch == false) {
-                    camera.Update(deltaTime, player.Position);
+                    camera.Update(deltaTime, map.player.Position);
             }
-
             //Free cursor or mouse moves cam
             if (mouseSwitch)
                 glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -241,14 +234,13 @@ public:
             shaders[3].setMat4("view", view);
             shaders[3].setMat4("projection", projection);
 
-            //sunLights[0].rot = glm::vec3(sin(glfwGetTime()), 1.f, 0.f);
             //Lights
             for (int i = 0; i < sunLightsNumber; i++) {
                 sunLights[i].draw(shaders[0], i);
             }
             
             //Player
-            player.draw(shaders[0], glm::vec3(0.05f, 0.05f, 0.05f));
+            //map.player.draw(shaders[0], glm::vec3(0.05f, 0.05f, 0.05f));
 
             //Objects
             //for (int i = 1; i < models.size(); i++) {
@@ -259,9 +251,9 @@ public:
                 sunLights[i].draw(shaders[1], i);
             }
             
-            map[0].draw(shaders[1], shaders[2]);
+            map.draw(shaders[1], shaders[2], shaders[0]);
 
-            skybox[0].draw(shaders[3], view, projection, camera);
+            skybox.draw(shaders[3], view, projection, camera);
             
             //gui
             gui.render();
@@ -284,7 +276,6 @@ private:
     int pointLightsNumber = 0;
     std::vector<Shader> shaders;
 
-    std::vector<MCube> cube;
-    std::vector<Map> map;
-    std::vector<Skybox> skybox;
+    Map map{ camera };
+    Skybox skybox{};
 };

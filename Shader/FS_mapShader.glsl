@@ -26,24 +26,23 @@ struct Material {
     vec3 specular;
     float shininess;
 }; 
+Material material;
 
 out vec4 FragColor;
 
 in vec3 Normal;
 in vec3 FragPos;
 in vec2 TexCoords;
-in vec4 vertexColor;
 
 uniform vec3 viewPos;
 uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_specular1;
 
 uniform vec3 lightPower;
-//uniform vec3 lightDirection = vec3(0.0);
 
-uniform int matOrText;
+uniform int matOrText = 1;
 
-uniform Material material;
+//uniform Material material;
 uniform PointLight light[10];
 uniform DirLight dirLight[4];
 
@@ -66,12 +65,13 @@ void main()
     }
 
     vec4 texColor = texture(texture_diffuse1, TexCoords);
-    if(texColor.a < 0.1)
-        discard;
+    if(texColor.a < 0.1) discard;
+
     FragColor = vec4(result, 1.0);
-    //FragColor = vec4(abs(Normal), 1.0);
-    //FragColor = vec4(vec3(gl_FragCoord.z), 1.0);
-    //FragColor = vec4(0.8,0.8,0.8,1.0);
+    //FragColor = vec4(0.0, 0.0, Normal.y, 1.0);
+    //FragColor = vec4(FragPos, 1.0);
+    //FragColor = vec4(Normal, 1.0);
+    //FragColor = vec4(dot(Normal, vec3(0.0, 1.0, 0.0)), 1.0, 1.0, 1.0);
 
 }
 
@@ -123,18 +123,47 @@ vec3 CalcDirLight(DirLight light)
     vec3 specular = vec3(0);
     float spec = 0.0;
 
-     vec3 lightDir = normalize(light.direction);
+    if (FragPos.y > 6){
+        if (dot(Normal, vec3(0.0, 1.0, 0.0)) < 0.3){    //Rock
+            material.diffuse = vec3(0.8, 0.8, 0.8);
+            material.ambient = vec3(0.8, 0.8, 0.8);
+            material.shininess = 20.0f;
+            material.specular = vec3(0.5f, 0.5f, 0.5f);
+        } 
+        else{                                           //Grass
+            material.diffuse = vec3(0.0, 0.8, 0.0);
+            material.ambient = vec3(0.0, 0.8, 0.0);
+            material.shininess = 70.0f;
+            material.specular = vec3(0.2f, 0.2f, 0.2f);
+        }
+    }
+    else{
+         if (dot(Normal, vec3(0.0, 1.0, 0.0)) < 0.3){    //Rock
+            material.diffuse = vec3(0.8, 0.8, 0.8);
+            material.ambient = vec3(0.8, 0.8, 0.8);
+            material.shininess = 20.0f;
+            material.specular = vec3(0.5f, 0.5f, 0.5f);
+        } 
+        else{                                           //Sand
+            material.diffuse = vec3(1.0, 1.0, 0.5);
+            material.ambient = vec3(1.0, 1.0, 0.5);
+            material.shininess = 128.0f;
+            material.specular = vec3(0.5f, 0.5f, 0.5f);
+        }
+    }
+
+    vec3 lightDir = normalize(light.direction);
 
     vec3 norm = normalize(Normal);
     float diff = max(dot(norm, lightDir), 0.0);
 
     vec3 viewDir = normalize(viewPos - FragPos);
     vec3 reflectDir = reflect(-lightDir, norm); 
-    spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.f);
+    spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
     if (matOrText == 1){    //If object has nos texture -> use material
-        ambient = vec3(0.1) * light.ambient * material.ambient;
-        diffuse = vec3(0.5) * lightPower * light.diffuse * (diff * material.diffuse);
+        ambient = vec3(0.15) * light.ambient * material.ambient;
+        diffuse = vec3(0.9) * lightPower * light.diffuse * (diff * material.diffuse);
         specular = vec3(1.0) * lightPower * light.specular * (spec * material.specular);
     }
 

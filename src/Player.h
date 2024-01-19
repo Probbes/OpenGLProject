@@ -14,7 +14,7 @@
 class Player {
 public:
     glm::vec3 Position = glm::vec3(0.0f, 0.0f, 0.0f);
-    float MovementSpeed = 10.0f;
+    float MovementSpeed = 100.0f;
 
     float jumpVelocity = 0.0f;
     float fallVelocity = 0.0f;
@@ -26,18 +26,19 @@ public:
     float speed = 0.3f;
     std::vector<Model> models;
 
-    Player(Camera icamera) : camera(icamera) {
-        //this->camera = camera;
+    Player(Camera& icamera) : camera(icamera) {
+        loadModel();
     }
 
     void loadModel() {
         models.push_back(Model("../assets/models/Robot/LilRobot.obj", glm::vec3(1.f, 1.f, 1.f), 0.f, glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f, 1.f, 1.f)));
     }
 
-    void ProcessKeyboardPlayer(Camera_Movement direction, float deltaTime)
+    void ProcessKeyboardPlayer(Camera_Movement direction, float deltaTime, float height)
     {
         float velocity = MovementSpeed * deltaTime;
         playerYaw = camera.Yaw;
+        //std::cout << playerYaw << std::endl;
         float angleRad = glm::radians(playerYaw);
         if (direction == FORWARD) {
             Position.x += cos(angleRad) * velocity * speed;
@@ -55,18 +56,19 @@ public:
             Position.x += sin(-angleRad) * velocity * speed;
             Position.z += cos(angleRad) * velocity * speed;
         } 
-       
+        Position.y = height;
     }
 
-    void draw(Shader& shader, glm::vec3 scale) {
+    void draw(Shader& shader) {
+        shader.use();
         //model.draw(shader, glm::vec3(Position.x, Position.y, Position.z), -playerYaw - 90.f, glm::vec3(0.0f, 1.0f, 0.0f), scale);
-        models[0].scale = scale;
+        models[0].scale = glm::vec3(0.05f, 0.05, 0.05f);
         models[0].pos = glm::vec3(Position.x, Position.y, Position.z);
         models[0].rotation = -playerYaw - 90.f;
         models[0].draw(shader);
     }
 private:
-    Camera camera;
+    Camera& camera;
 };
 
 //Player player;

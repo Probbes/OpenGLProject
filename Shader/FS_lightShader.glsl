@@ -39,7 +39,6 @@ uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_specular1;
 
 uniform vec3 lightPower;
-//uniform vec3 lightDirection = vec3(0.0);
 
 uniform int matOrText;
 
@@ -66,17 +65,12 @@ void main()
     }
 
     vec4 texColor = texture(texture_diffuse1, TexCoords);
-    if(texColor.a < 0.1) discard;
-
-        // Calculate spherical coordinates
-    float radius = length(FragPos);
-
-    if (radius > 10.5) {FragColor = vec4(1.0, 1.0, 1.0, 1.0);}
-    else if (radius > 10) {FragColor = vec4(0.0, 0.8, 0.0, 1.0);}
-    else {FragColor = vec4(0.2, 0.2, 0.2, 1.0);}
+    if(texColor.a < 0.1)
+        discard;
+    FragColor = vec4(result, 1.0);
     //FragColor = vec4(abs(Normal), 1.0);
-    //FragColor = vec4(FragPos, 1.0);
-    //FragColor = vec4()
+    //FragColor = vec4(vec3(gl_FragCoord.z), 1.0);
+    //FragColor = vec4(0.8,0.8,0.8,1.0);
 
 }
 
@@ -128,7 +122,7 @@ vec3 CalcDirLight(DirLight light)
     vec3 specular = vec3(0);
     float spec = 0.0;
 
-     vec3 lightDir = normalize(light.direction);
+    vec3 lightDir = -normalize(light.direction);
 
     vec3 norm = normalize(Normal);
     float diff = max(dot(norm, lightDir), 0.0);

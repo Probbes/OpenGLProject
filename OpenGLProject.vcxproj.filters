@@ -26,9 +26,6 @@
     <ClInclude Include="src\CameraClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Collision.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Gui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -47,16 +44,13 @@
     <ClInclude Include="src\Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Objects.h">
+    <ClInclude Include="src\Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ShaderClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\SimpleGeometry.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Text.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\TexturesHeader.h">
@@ -73,15 +67,13 @@
     <None Include="Shader\shader.vs">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="Shader\lightShader.fs" />
-    <None Include="Shader\lightShader.vs" />
-    <None Include="Shader\mapShader.fs" />
-    <None Include="Shader\mapShader.vs" />
-    <None Include="Shader\planetShader.fs" />
-    <None Include="Shader\planetShader.vs" />
-    <None Include="Shader\WaterShader.fs" />
-    <None Include="Shader\WaterShader.vs" />
-    <None Include="Shader\skyboxShader.vs" />
-    <None Include="Shader\skyboxShader.fs" />
+    <None Include="Shader\FS_lightShader.glsl" />
+    <None Include="Shader\VS_lightShader.glsl" />
+    <None Include="Shader\FS_mapShader.glsl" />
+    <None Include="Shader\VS_mapShader.glsl" />
+    <None Include="Shader\FS_WaterShader.glsl" />
+    <None Include="Shader\VS_WaterShader.glsl" />
+    <None Include="Shader\VS_skyboxShader.glsl" />
+    <None Include="Shader\FS_skyboxShader.glsl" />
   </ItemGroup>
 </Project>
