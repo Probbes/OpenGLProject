@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\antoi\Documents\OpenGL\OpenGLProject\src;C:\Users\antoi\Documents\OpenGL\vcpkg_installed\x64-windows\x64-windows\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\antoi\Documents\OpenGL\OpenGLProject\src\Headers;C:\Users\antoi\Documents\OpenGL\vcpkg_installed\x64-windows\x64-windows\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\antoi\Documents\OpenGL\vcpkg_installed\x64-windows\x64-windows\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">
@@ -139,21 +139,27 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\CameraClass.cpp" />
+    <ClCompile Include="src\Lights.cpp" />
+    <ClCompile Include="src\Map.cpp" />
+    <ClCompile Include="src\mesh.cpp" />
+    <ClCompile Include="src\Model.cpp" />
+    <ClCompile Include="src\Player.cpp" />
+    <ClCompile Include="src\ShaderClass.cpp" />
+    <ClCompile Include="src\SkyBox.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Application.h" />
-    <ClInclude Include="src\CameraClass.h" />
-    <ClInclude Include="src\Gui.h" />
-    <ClInclude Include="src\Inputs.h" />
-    <ClInclude Include="src\Lights.h" />
-    <ClInclude Include="src\Map.h" />
-    <ClInclude Include="src\mesh.h" />
-    <ClInclude Include="src\Model.h" />
-    <ClInclude Include="src\Player.h" />
-    <ClInclude Include="src\ShaderClass.h" />
-    <ClInclude Include="src\SimpleGeometry.h" />
-    <ClInclude Include="src\SkyBox.h" />
-    <ClInclude Include="src\TexturesHeader.h" />
+    <ClInclude Include="src\Headers\Application.h" />
+    <ClInclude Include="src\Headers\CameraClass.h" />
+    <ClInclude Include="src\Headers\Gui.h" />
+    <ClInclude Include="src\Headers\Lights.h" />
+    <ClInclude Include="src\Headers\Map.h" />
+    <ClInclude Include="src\Headers\mesh.h" />
+    <ClInclude Include="src\Headers\Model.h" />
+    <ClInclude Include="src\Headers\Player.h" />
+    <ClInclude Include="src\Headers\ShaderClass.h" />
+    <ClInclude Include="src\Headers\SkyBox.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\FS_lightShader.glsl" />
