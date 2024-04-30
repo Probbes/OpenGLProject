@@ -116,6 +116,7 @@ void Application::loop() {
 			sunLights[i].draw(shaders[1], i);
 		}
 
+		map.update();
 		map.draw(shaders[1], shaders[2], shaders[0]);
 
 		skybox.draw(shaders[3], view, projection, camera);
@@ -149,16 +150,16 @@ void processInput(GLFWwindow* window, Player& player, Map& map) { // ZQSD
 
 	if (!cameraSwitch) {
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-			player.ProcessKeyboardPlayer(FORWARD, deltaTime, map.checkPosMapHeight(player.Position.x, player.Position.z));
+			player.ProcessKeyboardPlayer(FORWARD, deltaTime);
 		};
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-			player.ProcessKeyboardPlayer(BACKWARD, deltaTime, map.checkPosMapHeight(player.Position.x, player.Position.z));
+			player.ProcessKeyboardPlayer(BACKWARD, deltaTime);
 		};
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-			player.ProcessKeyboardPlayer(LEFT, deltaTime, map.checkPosMapHeight(player.Position.x, player.Position.z));
+			player.ProcessKeyboardPlayer(LEFT, deltaTime);
 		};
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-			player.ProcessKeyboardPlayer(RIGHT, deltaTime, map.checkPosMapHeight(player.Position.x, player.Position.z));
+			player.ProcessKeyboardPlayer(RIGHT, deltaTime);
 		};
 	}
 

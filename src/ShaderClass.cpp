@@ -1,16 +1,5 @@
 #include "ShaderClass.h"
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glad/glad.h>
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-
-#include "CameraClass.h"
-
 // constructor generates the shader on the fly
 // ------------------------------------------------------------------------
 Shader::Shader(const char* vertexPath, const char* fragmentPath)

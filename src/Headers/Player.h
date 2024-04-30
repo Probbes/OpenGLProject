@@ -29,7 +29,7 @@ public:
 
     void loadModel();
 
-    void ProcessKeyboardPlayer(Camera_Movement direction, float deltaTime, float height);
+    void ProcessKeyboardPlayer(Camera_Movement direction, float deltaTime);
 
     void draw(Shader& shader);
 

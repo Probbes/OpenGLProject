@@ -1,17 +1,27 @@
 #include "Map.h"
 
-Chunk::Chunk(int ix, int iz, int isize) : startx(ix), startz(iz), size(isize) {
+//--------------------CHUNK------------------------
+Chunk::Chunk(float ix, float iz, float isize) : startx(ix), startz(iz), size(isize) {
 	step = 1.0f / subdivisions * size;
-	vertices.reserve(subdivisions * subdivisions * 6);
-	indices.reserve(subdivisions * subdivisions * 2);
-	noiseOutput.reserve((subdivisions + 3) * (subdivisions + 3));
 	buildNoise();
 	build();
 	buffer();
+
+	//assign random color to chunk
+	randColorTest = glm::vec3((float)rand() / RAND_MAX, (float)rand() / RAND_MAX, (float)rand() / RAND_MAX);
 }
 
-void Chunk::draw(Shader& pshader) {
-	drawChunk(pshader);
+void Chunk::draw(Shader& shader) {
+	shader.use();
+	shader.setVec3("test", randColorTest);
+	glm::mat4 model = glm::mat4(1.0f);
+	//model = glm::translate(model, glm::vec3(0.f, 0.f, 0.f));
+	//model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	//model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+	shader.setMat4("model", model);
+	glBindVertexArray(VAO);
+	glDrawElements(GL_TRIANGLE_STRIP, indices.size(), GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
 }
 
 void Chunk::rebuildChunk() {
@@ -20,26 +30,18 @@ void Chunk::rebuildChunk() {
 }
 
 float Chunk::checkPosChunkHeight(float x, float z) {
-	//find index
-	int x_int = static_cast<int>(x * 100);
-	int z_int = static_cast<int>(z * 100);
-	int step_int = static_cast<int>(step * 100);
-
-	std::div_t resultX = std::div(x_int, step_int);
-	std::div_t resultZ = std::div(z_int, step_int);
-
-	double quotientX = static_cast<double>(resultX.quot);
-	double quotientZ = static_cast<double>(resultZ.quot);
-
+	float zeroX = x - startx;
+	float zeroZ = z - startz;
 	float remainderX = fmod(x, step);
 	float remainderZ = fmod(z, step);
 
-	int index = (quotientZ * (subdivisions + 1) + quotientX) * 6;
+	int index = ((int)(zeroZ / step) * (subdivisions + 1) + (int)(zeroX / step)) * 6;
 
 	//Barycentric coordinates
 	glm::vec3 p1 = glm::vec3(0, vertices[index + 1], 0);
 	glm::vec3 p2 = glm::vec3(step, vertices[index + 7], 0);
 	glm::vec3 p3 = glm::vec3(0, vertices[index + (subdivisions + 1) * 6 + 1], step);
+
 
 	float denom = (p2.z - p3.z) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.z - p3.z);
 
@@ -62,24 +64,10 @@ float Chunk::checkPosChunkHeight(float x, float z) {
 	}
 }
 
-void Chunk::drawChunk(Shader& shader) {
-	shader.use();
-	glm::mat4 model = glm::mat4(1.0f);
-	//model = glm::translate(model, glm::vec3(0.f, 0.f, 0.f));
-	//model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	//model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
-	shader.setMat4("model", model);
-	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLE_STRIP, indices.size(), GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-}
-
 void Chunk::buildNoise() {
-	//Why do I have to create another noise variable ?
+	noiseOutput.resize((subdivisions + 3) * (subdivisions + 3));
 	FastNoise::SmartNode<> fnGenerator = FastNoise::NewFromEncodedNodeTree("DQAIAAAA16MQQAkAAMP1KD8AAACAPw==");
-	std::vector<float> noise((subdivisions + 3) * (subdivisions + 3));	//(Subdivisions + 1) + 2 -> extra vertices for normal
-	fnGenerator->GenUniformGrid2D(noise.data(), startx * (subdivisions / size), startz * (subdivisions / size), subdivisions + 3, subdivisions + 3, (size / subdivisions) / 2000, 1);
-	noiseOutput = noise;
+	fnGenerator->GenUniformGrid2D(noiseOutput.data(), startx * (subdivisions / size), startz * (subdivisions / size), subdivisions + 3, subdivisions + 3, (size / subdivisions) / 2000, 1);
 }
 
 void Chunk::build() {
@@ -96,7 +84,6 @@ void Chunk::build() {
 	glm::vec3 U = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 V = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 Normal = glm::vec3(0.0f, 0.0f, 0.0f);
-	//std::cout << noiseOutput[subdivisions];
 
 	// Generate vertices position
 	for (int i = 0; i <= subdivisions; ++i) {
@@ -113,16 +100,14 @@ void Chunk::build() {
 			vertices.push_back(posZ);
 
 			//Normal
-			U = glm::vec3(step, noiseOutput[noiseIndex + 1] * 300.f, 0) - glm::vec3(-step, noiseOutput[noiseIndex - 1] * 300.f, 0);
-			V = glm::vec3(0, noiseOutput[(noiseIndex + subdivisions) + 3] * 300.f, step) - glm::vec3(0, noiseOutput[(noiseIndex - subdivisions) - 3] * 300.f, -step);
+			U = glm::vec3(1	, noiseOutput[noiseIndex + 1] * 300.f, 0) - glm::vec3(-1, noiseOutput[noiseIndex - 1] * 300.f, 0);
+			V = glm::vec3(0, noiseOutput[(noiseIndex + subdivisions) + 3] * 300.f, 1) - glm::vec3(0, noiseOutput[(noiseIndex - subdivisions) - 3] * 300.f, -1);
+			/*U = glm::vec3(step, noiseOutput[noiseIndex + 1] * 300.f, 0) - glm::vec3(-step, noiseOutput[noiseIndex - 1] * 300.f, 0);
+			V = glm::vec3(0, noiseOutput[(noiseIndex + subdivisions) + 3] * 300.f, step) - glm::vec3(0, noiseOutput[(noiseIndex - subdivisions) - 3] * 300.f, -step);*/
 			Normal = glm::cross(U, V);
+			//Normal.y = abs(Normal.y);
 			Normal.y = 1.f;
 			Normal = glm::normalize(Normal);
-
-			//if (j == subdivisions) { std::cout << noiseIndex << " - " << j << " : " << U.x << " x " << V.x << " - " << U.y << " x " << V.y << " - " << U.z << " x " << V.z << std::endl; }
-			//std::cout << noiseIndex << " - " << j << " : " << noiseOutput[noiseIndex + subdivisions + 3] * 300.f << " - " << noiseOutput[noiseIndex - subdivisions - 3] * 300.f << std::endl;
-			//if (i == subdivisions) { }
-			//std::cout << i << " - " << j << " : " << Normal.x << " - " << Normal.y << " - " << Normal.z << std::endl;
 			vertices.push_back(Normal.x);
 			vertices.push_back(Normal.y);
 			vertices.push_back(Normal.z);
@@ -174,8 +159,92 @@ void Chunk::buffer() {
 	glBindVertexArray(0);
 }
 
+//--------------------Quadtree--------------------
+Quadtree::Quadtree(glm::vec2 min, float size, int imaxDepth) : maxDepth(imaxDepth) {
+	root = new QuadtreeNode(min, size, maxDepth + 1);
+	subdivideNode(root, maxDepth, glm::vec2(0, 0));
+	setCurrentNode(glm::vec2(0, 0));
+}
+
+std::vector<QuadtreeNode*> Quadtree::returnAllNull() {
+	std::vector<QuadtreeNode*> result;
+	returnAllNullHelper(root, result);
+	return result;
+};
+
+void Quadtree::subdivideNode(QuadtreeNode* node, int level, glm::vec2 point) {
+	if (level == 1) {
+		return;
+	}
+
+	float halfSize = node->size / 2.f;
+
+	glm::vec2 mid = glm::vec2(node->min.x + halfSize, node->min.y + halfSize);
+	node->children[0] = new QuadtreeNode(node->min, halfSize, level);
+	node->children[1] = new QuadtreeNode(glm::vec2(mid.x, node->min.y), halfSize, level);
+	node->children[2] = new QuadtreeNode(glm::vec2(node->min.x, mid.y), halfSize, level);
+	node->children[3] = new QuadtreeNode(mid, halfSize, level);
+
+	subdivideNode(node->children[minimumLenght(point, node)], level - 1, point);
+}
+
+void Quadtree::returnAllNullHelper(QuadtreeNode* node, std::vector<QuadtreeNode*>& result) {
+	bool hasChildren = false;
+	for (int i = 0; i < 4; i++) {
+		if (node->children[i] != nullptr) {
+			hasChildren = true;
+			returnAllNullHelper(node->children[i], result);
+		}
+	}
+	if (!hasChildren) {
+		result.push_back(node);
+	}
+};
+
+int Quadtree::minimumLenght(glm::vec2 point, QuadtreeNode* node) {
+	if (node->children[0]->level == 0) return -1;
+
+	float min = glm::distance(point, node->children[0]->center);
+	int minIndex = 0;
+
+	for (int i = 1; i < 4; i++) {
+		float distance = glm::distance(point, node->children[i]->center);
+		if (distance < min) {
+			min = distance;
+			minIndex = i;
+		}
+	}
+	return minIndex;
+}
+
+QuadtreeNode* Quadtree::getNodeWherePointIsHelper(glm::vec2 point, QuadtreeNode* node, int level) {
+	if (level > 1) {
+		getNodeWherePointIsHelper(point, node->children[minimumLenght(point, node)], level - 1);
+	}
+	else { return node; }
+}
+
+//--------------------MAP------------------------
 Map::Map(Camera& icamera) : camera(icamera), player(icamera) {
-	buildChunks(); buildWater(); bufferWater();
+	getPlayerPos();
+	buildChunksFromQuadtree();
+	buildWater(); bufferWater();
+}
+
+void Map::update() {
+	getPlayerPos();
+	//Quadtree check and build map
+	glm::vec2 cameraPos = glm::vec2(camera.Position.x, camera.Position.z);
+	glm::vec2 nodeMin = quadtree.currentNode->min;
+	float nodeSize = quadtree.currentNode->size;
+	if (cameraPos.x < nodeMin.x || cameraPos.x > nodeMin.x + nodeSize || cameraPos.y < nodeMin.y || cameraPos.y > nodeMin.y + nodeSize) {
+		quadtree.subdivideUpdate(cameraPos);
+		buildChunksFromQuadtree();
+		quadtree.setCurrentNode(cameraPos);
+	}
+
+	//Player y position
+	movePlayerY();
 }
 
 void Map::draw(Shader& pshader, Shader& wshader, Shader& playerShader) {
@@ -185,19 +254,8 @@ void Map::draw(Shader& pshader, Shader& wshader, Shader& playerShader) {
 	player.draw(playerShader);
 }
 
-float Map::checkPosMapHeight(float x, float z) {
-	if (x >= 0 && z >= 0) {
-		return chunks[3].checkPosChunkHeight(x, z);
-	}
-	else if (x < 0 && z >= 0) {
-		return chunks[2].checkPosChunkHeight(chunkWidth - abs(x), z);
-	}
-	else if (x >= 0 && z < 0) {
-		return chunks[1].checkPosChunkHeight(x, chunkWidth - abs(z));
-	}
-	else if (x < 0 && z < 0) {
-		return chunks[0].checkPosChunkHeight(chunkWidth - abs(x), chunkWidth - abs(z));
-	}
+void Map::getPlayerPos() {
+	playerPos = glm::vec2(player.Position.x, player.Position.z);
 }
 
 void Map::setMaterial(Shader& shader) {
@@ -207,16 +265,6 @@ void Map::setMaterial(Shader& shader) {
 	shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
 	shader.setFloat("material.shininess", 0.2f);
 	shader.setInt("matOrText", 1);
-}
-
-void Map::buildChunks() {
-	int max = (chunkNumber * chunkNumber) + chunkNumber;
-	for (int z = -chunkNumber; z < chunkNumber; z++) {
-		for (int x = -chunkNumber; x < chunkNumber; x++) {
-			chunks.push_back(Chunk(x * chunkWidth, z * chunkWidth, chunkWidth));
-		}
-	}
-	//chunks.push_back(Chunk(0, 0, chunkWidth));
 }
 
 void Map::drawChunks(Shader& pshader) {
@@ -281,4 +329,22 @@ void Map::bufferWater() {
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+}
+
+void Map::buildChunksFromQuadtree() {
+	chunks.clear();
+	std::vector<QuadtreeNode*> allNodes = quadtree.returnAllNull();
+	for (int i = 0; i < allNodes.size(); i++) {
+		chunks.push_back(Chunk(allNodes[i]->min.x, allNodes[i]->min.y, allNodes[i]->size));
+	}
+}
+
+void Map::movePlayerY() {
+	for (int i = 0; i < chunks.size(); i++) {
+		glm::vec2 chunkStart = chunks[i].getStart();
+		float chunkSize = chunks[i].getSize();
+		if (playerPos.x >= chunkStart.x && playerPos.x < chunkStart.x + chunkSize && playerPos.y >= chunkStart.y && playerPos.y < chunkStart.y + chunkSize) {
+			player.Position.y = chunks[i].checkPosChunkHeight(playerPos.x, playerPos.y);
+		}
+	}	
 }

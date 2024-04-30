@@ -8,7 +8,7 @@ void Player::loadModel() {
 	models.push_back(Model("../assets/models/Robot/LilRobot.obj", glm::vec3(1.f, 1.f, 1.f), 0.f, glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f, 1.f, 1.f)));
 }
 
-void Player::ProcessKeyboardPlayer(Camera_Movement direction, float deltaTime, float height)
+void Player::ProcessKeyboardPlayer(Camera_Movement direction, float deltaTime)
 {
 	float velocity = MovementSpeed * deltaTime;
 	playerYaw = camera.Yaw;
@@ -30,7 +30,6 @@ void Player::ProcessKeyboardPlayer(Camera_Movement direction, float deltaTime, f
 		Position.x += sin(-angleRad) * velocity * speed;
 		Position.z += cos(angleRad) * velocity * speed;
 	}
-	Position.y = height;
 }
 
 void Player::draw(Shader& shader) {

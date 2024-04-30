@@ -1,14 +1,9 @@
 #pragma once
-
-//#define CAMERA_H
-//#include <glad/glad.h>
-//#include <glm/glm.hpp>
-//#include <glm/gtc/matrix_transform.hpp>
-//#include <vector>
-//#define _USE_MATH_DEFINES
-//#include <math.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 enum Camera_Movement {
