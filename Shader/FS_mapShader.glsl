@@ -52,6 +52,8 @@ vec3 CalcDirLight(DirLight light);
 uniform int numberOfSun = 0;
 uniform int numberOfPointLight = 0;
 
+uniform vec3 test;
+
 void main()
 {
     vec3 result;
@@ -70,9 +72,8 @@ void main()
     //FragColor = vec4(result, 1.0);
     FragColor = vec4(Normal, 1.0);
     //FragColor = vec4(FragPos, 1.0);
-    //FragColor = vec4(Normal, 1.0);
-    //FragColor = vec4(dot(Normal, vec3(0.0, 1.0, 0.0)), 1.0, 1.0, 1.0);
-
+    //FragColor = vec4(0.0,acos(dot(normalize(Normal), normalize(vec3(0.0, 1.0, 0.0)))), 0.0, 1.0);
+    //FragColor = vec4(test, 1.f);
 }
 
 vec3 CalcPointLight(PointLight light)
@@ -124,7 +125,7 @@ vec3 CalcDirLight(DirLight light)
     float spec = 0.0;
 
     if (FragPos.y > 6){
-        if (dot(Normal, vec3(0.0, 1.0, 0.0)) < 0.3){    //Rock
+        if (dot(Normal, vec3(0.0, 1.0, 0.0)) < 0.08){    //Rock
             material.diffuse = vec3(0.8, 0.8, 0.8);
             material.ambient = vec3(0.8, 0.8, 0.8);
             material.shininess = 20.0f;
@@ -138,7 +139,7 @@ vec3 CalcDirLight(DirLight light)
         }
     }
     else{
-         if (dot(Normal, vec3(0.0, 1.0, 0.0)) < 0.3){    //Rock
+         if (dot(Normal, vec3(0.0, 1.0, 0.0)) < 0.01){    //Rock
             material.diffuse = vec3(0.8, 0.8, 0.8);
             material.ambient = vec3(0.8, 0.8, 0.8);
             material.shininess = 20.0f;
@@ -158,8 +159,9 @@ vec3 CalcDirLight(DirLight light)
     float diff = max(dot(norm, lightDir), 0.0);
 
     vec3 viewDir = normalize(viewPos - FragPos);
+    vec3 halfwayDir = normalize(lightDir + viewDir);
     vec3 reflectDir = reflect(-lightDir, norm); 
-    spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    spec = pow(max(dot(Normal, halfwayDir), 0.0), material.shininess);
 
     if (matOrText == 1){    //If object has nos texture -> use material
         ambient = vec3(0.15) * light.ambient * material.ambient;

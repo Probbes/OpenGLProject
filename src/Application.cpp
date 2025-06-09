@@ -105,7 +105,7 @@ void Application::loop() {
 		}
 
 		//Player
-		//map.player.draw(shaders[0]);
+		//map.player.draw(shaders[0], glm::vec3(0.05f, 0.05f, 0.05f));
 
 		//Objects
 		//for (int i = 1; i < models.size(); i++) {
@@ -116,7 +116,7 @@ void Application::loop() {
 			sunLights[i].draw(shaders[1], i);
 		}
 
-		//map.update();
+		map.update();
 		map.draw(shaders[1], shaders[2], shaders[0]);
 
 		skybox.draw(shaders[3], view, projection, camera);

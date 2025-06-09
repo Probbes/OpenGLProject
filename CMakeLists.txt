@@ -19,7 +19,7 @@ LINK_DIRECTORIES(
 
 file(GLOB SOURCES
     C:/Users/Probb/Documents/GitHub/OpenGLProject/main.cpp
-    C:/Users/Probb/Documents/GitHub/OpenGLProject/src/Headers/*.h
+    C:/Users/Probb/Documents/GitHub/OpenGLProject/src/Headers*.h
     C:/Users/Probb/Documents/GitHub/OpenGLProject/src/*.cpp
 )
 
