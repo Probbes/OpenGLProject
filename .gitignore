@@ -1,5 +1,9 @@
-x64/*
-.VS/*
-/imgui.ini
-/tutorial.bmp
-*.dll
+/build
+/.vscode
+/vcpkg
+/vcpkg_installed
+imgui.ini
+OpenGLProject.sln
+OpenGLProject.vcxproj
+OpenGLProject.vcxproj.
+OpenGLProject.vcxproj.user

@@ -1,0 +1,21 @@
+{
+  "dependencies": [
+    "assimp",
+    {
+      "name": "glad",
+      "features": [
+        "gl-api-33"
+      ]
+    },
+    "glfw3",
+    "glm",
+    {
+      "name": "imgui",
+      "features": [
+        "glfw-binding",
+        "opengl3-binding"
+      ]
+    },
+    "fmt"
+  ]
+}

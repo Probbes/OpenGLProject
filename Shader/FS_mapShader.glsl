@@ -67,8 +67,8 @@ void main()
     vec4 texColor = texture(texture_diffuse1, TexCoords);
     if(texColor.a < 0.1) discard;
 
-    FragColor = vec4(result, 1.0);
-    //FragColor = vec4(0.0, 0.0, Normal.y, 1.0);
+    //FragColor = vec4(result, 1.0);
+    FragColor = vec4(Normal, 1.0);
     //FragColor = vec4(FragPos, 1.0);
     //FragColor = vec4(Normal, 1.0);
     //FragColor = vec4(dot(Normal, vec3(0.0, 1.0, 0.0)), 1.0, 1.0, 1.0);
