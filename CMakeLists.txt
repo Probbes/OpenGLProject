@@ -8,19 +8,19 @@ if (MSVC)
 endif()
 
 INCLUDE_DIRECTORIES(
-    C:/Users/Probb/Documents/GitHub/OpenGLProject/vcpkg_installed/x64-windows/include
-    C:/Users/Probb/Documents/GitHub/OpenGLProject/src
-    C:/Users/Probb/Documents/GitHub/OpenGLProject/src/Headers
+    ${PROJECT_SOURCE_DIR}/vcpkg_installed/x64-windows/include
+    ${PROJECT_SOURCE_DIR}/src
+    ${PROJECT_SOURCE_DIR}/src/Headers
 )
 
 LINK_DIRECTORIES(
-    C:/Users/Probb/Documents/GitHub/OpenGLProject/vcpkg_installed/x64-windows/lib
+    ${PROJECT_SOURCE_DIR}/vcpkg_installed/x64-windows/lib
 )
 
 file(GLOB SOURCES
-    C:/Users/Probb/Documents/GitHub/OpenGLProject/main.cpp
-    C:/Users/Probb/Documents/GitHub/OpenGLProject/src/Headers*.h
-    C:/Users/Probb/Documents/GitHub/OpenGLProject/src/*.cpp
+    ${PROJECT_SOURCE_DIR}/main.cpp
+    ${PROJECT_SOURCE_DIR}/src/Headers*.h
+    ${PROJECT_SOURCE_DIR}/src/*.cpp
 )
 
 add_executable(OpenGLProject ${SOURCES})
