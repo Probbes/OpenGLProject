@@ -26,7 +26,7 @@ void Application::init() {
 
 void Application::initObj() {
 	shaders[0].use();
-	models.push_back(Model("assets/models/Box/Box.obj", glm::vec3(1.f, 1.f, 1.f), 0.f, glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f, 1.f, 1.f)));
+	models.push_back(Model("assets/models/Room/room.obj", glm::vec3(1.f, 1.f, 1.f), 0.f, glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f, 1.f, 1.f)));
 
 	sunLights.push_back(SunLight(camera, glm::vec3(1.f, 1.f, 1.f), glm::vec3(1.0f, 0.5f, 0.5f)));
 	sunLightsNumber = (int)sunLights.size();
@@ -35,18 +35,14 @@ void Application::initObj() {
 	shaders[1].setInt("numberOfSun", sunLightsNumber);
 
 	//pointLights.push_back(PointLight(camera, glm::vec3(1.f, 1.f, 1.f), glm::vec3(1.f, 0.f, 0.f)));
-	pointLightsNumber = (int)pointLights.size();
-	shaders[0].setInt("numberOfPointLight", pointLightsNumber);
-	//shaders[1].use();
-	//shaders[1].setInt("numberOfSun", sunLightsNumber);
-	//shaders[1].setInt("numberOfPointLight", pointLightsNumber);
+	//pointLightsNumber = (int)pointLights.size();
+	//shaders[0].setInt("numberOfPointLight", pointLightsNumber);
 }
 
 void Application::loop() {
 	// render loop
 	while (!glfwWindowShouldClose(window))
 	{
-		//sleep(0.001);    //block framerate max
 		// per-frame time logic
 		float currentFrame = static_cast<float>(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
@@ -76,44 +72,35 @@ void Application::loop() {
 		if (cameraSwitch == false) {
 			camera.Update(deltaTime, map.player.Position);
 		}
+
 		//Free cursor or mouse moves cam
 		if (mouseSwitch)
 			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		else if (!mouseSwitch)
 			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
-		//Camere & Shader WIP
+		//Camera & Shader WIP
 		view = camera.GetViewMatrix();
 		projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 5000.0f);
 
-		shaders[0].use();
-		shaders[0].setMat4("view", view);
-		shaders[0].setMat4("projection", projection);
-		shaders[1].use();
-		shaders[1].setMat4("view", view);
-		shaders[1].setMat4("projection", projection);
-		shaders[2].use();
-		shaders[2].setMat4("view", view);
-		shaders[2].setMat4("projection", projection);
-		shaders[3].use();
-		shaders[3].setMat4("view", view);
-		shaders[3].setMat4("projection", projection);
+		//Shaders
+		for (Shader& shader : shaders){
+			shader.use();
+			shader.setMat4("view", view);
+			shader.setMat4("projection", projection);
+		}
 
 		//Lights
 		for (int i = 0; i < sunLightsNumber; i++) {
 			sunLights[i].draw(shaders[0], i);
 		}
-
-		//Player
-		//map.player.draw(shaders[0], glm::vec3(0.05f, 0.05f, 0.05f));
-
-		//Objects
-		//for (int i = 1; i < models.size(); i++) {
-		//    models[i].draw(shaders[0]);
-		//}
-
 		for (int i = 0; i < sunLightsNumber; i++) {
 			sunLights[i].draw(shaders[1], i);
+		}
+
+		//Objects
+		for(Model& model : models){
+			model.draw(shaders[0]);
 		}
 
 		map.update();

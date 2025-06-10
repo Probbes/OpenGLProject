@@ -50,9 +50,9 @@ public:
 
     Application(GLFWwindow* iwindow);
 
-    void init();
+    void init();    //Initialize shaders and GL parameters
 
-    void initObj();
+    void initObj(); //Initialize objects and lights to be rendered inside std::vectors
 
     void loop();
 
